@@ -1,20 +1,4 @@
-export interface FreeTrialsEntry {
-  date: string
-  value: number
-  "percentage-change"?: number | null
-}
-
-export interface FreeTrialsSummary {
-  metric: string
-  current: number
-  previous: number
-  "percentage-change": number | null
-}
-
-export interface FreeTrialsData {
-  entries: FreeTrialsEntry[]
-  summary: FreeTrialsSummary
-}
+import { FreeTrialsData } from '../types/dashboardData'
 
 export const freeTrialsData: FreeTrialsData = {
   "entries": [

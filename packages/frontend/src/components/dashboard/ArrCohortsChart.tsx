@@ -1,11 +1,7 @@
 import { useEffect, useRef } from 'react'
 import * as echarts from 'echarts'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { arrCohortsData, ArrCohortsEntry } from '@/data/arrCohortsData'
-
-interface ArrCohortsChartProps {
-  data: typeof arrCohortsData
-}
+import { ArrCohortsChartProps, ArrCohortsEntry } from '../../types/dashboardData'
 
 export function ArrCohortsChart({ data }: ArrCohortsChartProps) {
   const chartRef = useRef<HTMLDivElement>(null)

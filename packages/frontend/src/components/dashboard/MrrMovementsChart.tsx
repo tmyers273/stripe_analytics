@@ -1,20 +1,7 @@
 import { useEffect, useRef } from 'react'
 import * as echarts from 'echarts'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-
-interface MrrData {
-  date: string
-  new_biz_mrr: number
-  expansion_mrr: number
-  contraction_mrr: number
-  churn_mrr: number
-  reactivation_mrr: number
-  net_movement_mrr: number
-}
-
-interface MrrMovementsChartProps {
-  data: MrrData[]
-}
+import { MrrMovementsChartProps } from '../../types/dashboardData'
 
 export function MrrMovementsChart({ data }: MrrMovementsChartProps) {
   const chartRef = useRef<HTMLDivElement>(null)

@@ -1,60 +1,6 @@
-export interface NewBizReactivationEntry {
-  date: string
-  new_biz_mrr: number
-  new_biz_count: number
-  new_biz_activity_count: number
-  new_biz_customer_count: number
-  expansion_mrr: number
-  expansion_count: number
-  expansion_activity_count: number
-  expansion_customer_count: number
-  contraction_mrr: number
-  contraction_count: number
-  contraction_activity_count: number
-  contraction_customer_count: number
-  churn_mrr: number
-  churn_count: number
-  churn_activity_count: number
-  churn_customer_count: number
-  reactivation_mrr: number
-  reactivation_count: number
-  reactivation_activity_count: number
-  reactivation_customer_count: number
-  entered_mrr: number
-  entered_count: number
-  entered_activity_count: number
-  entered_customer_count: number
-  left_mrr: number
-  left_count: number
-  left_activity_count: number
-  left_customer_count: number
-  net_movement_mrr: number
-  net_movement_arr: number
-  original_new_biz_mrr: null
-  original_new_biz_activity_count: null
-  original_new_biz_customer_count: null
-  original_churn_mrr: null
-  original_churn_activity_count: null
-  original_churn_customer_count: null
-  original_reactivation_mrr: null
-  original_reactivation_activity_count: null
-  original_reactivation_customer_count: null
-  reclassified_new_biz_mrr: null
-  reclassified_new_biz_activity_count: null
-  reclassified_new_biz_customer_count: null
-  reclassified_churn_mrr: null
-  reclassified_churn_activity_count: null
-  reclassified_churn_customer_count: null
-  reclassified_reactivation_mrr: null
-  reclassified_reactivation_activity_count: null
-  reclassified_reactivation_customer_count: null
-  "percentage-change"?: null
-}
+import { NewBizReactivationData } from '../types/dashboardData'
 
-export const newBizReactivationData: {
-  entries: NewBizReactivationEntry[]
-  summary: any[]
-} = {
+export const newBizReactivationData: NewBizReactivationData = {
   "entries": [
     {
       "date": "2023-12-31",

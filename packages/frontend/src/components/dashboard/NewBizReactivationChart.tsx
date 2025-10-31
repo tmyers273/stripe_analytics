@@ -1,11 +1,7 @@
 import { useEffect, useRef } from 'react'
 import * as echarts from 'echarts'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { NewBizReactivationEntry } from '@/data/newBizReactivationData'
-
-interface NewBizReactivationChartProps {
-  data: NewBizReactivationEntry[]
-}
+import { NewBizReactivationChartProps } from '../../types/dashboardData'
 
 export function NewBizReactivationChart({ data }: NewBizReactivationChartProps) {
   const chartRef = useRef<HTMLDivElement>(null)

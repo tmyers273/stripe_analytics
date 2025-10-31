@@ -1,20 +1,4 @@
-export interface LeadsEntry {
-  date: string
-  value: number
-  "percentage-change"?: number | null
-}
-
-export interface LeadsSummary {
-  metric: string
-  current: number
-  previous: number
-  "percentage-change": number
-}
-
-export interface LeadsData {
-  entries: LeadsEntry[]
-  summary: LeadsSummary
-}
+import { LeadsData } from '../types/dashboardData'
 
 export const leadsData: LeadsData = {
   "entries": [

@@ -1,18 +1,6 @@
-export interface SubscribersEntry {
-  date: string
-  value: number
-  "percentage-change"?: number
-}
+import { SubscribersData } from '../types/dashboardData'
 
-export const subscribersData: {
-  entries: SubscribersEntry[]
-  summary: {
-    metric: string
-    current: number
-    previous: number
-    "percentage-change": number
-  }
-} = {
+export const subscribersData: SubscribersData = {
   "entries": [
     {
       "date": "2023-10-31",

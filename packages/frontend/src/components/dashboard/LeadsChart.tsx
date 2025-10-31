@@ -1,16 +1,7 @@
 import { useEffect, useRef } from 'react'
 import * as echarts from 'echarts'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { leadsData, LeadsEntry } from '@/data/leadsData'
-
-interface LeadsChartProps {
-  data: LeadsEntry[]
-  summary: {
-    current: number
-    previous: number
-    "percentage-change": number
-  }
-}
+import { LeadsChartProps } from '../../types/dashboardData'
 
 export function LeadsChart({ data, summary }: LeadsChartProps) {
   const chartRef = useRef<HTMLDivElement>(null)
@@ -137,11 +128,13 @@ export function LeadsChart({ data, summary }: LeadsChartProps) {
   const currentLeads = summary.current
   const percentageChange = summary['percentage-change']
 
-  const getChangeColor = (change: number) => {
+  const getChangeColor = (change: number | null) => {
+    if (change === null) return '#6b7280'
     return change > 0 ? '#10b981' : change < 0 ? '#ef4444' : '#6b7280'
   }
 
-  const getChangeText = (change: number) => {
+  const getChangeText = (change: number | null) => {
+    if (change === null) return 'No data'
     const sign = change > 0 ? '+' : ''
     return `${sign}${change.toFixed(2)}%`
   }

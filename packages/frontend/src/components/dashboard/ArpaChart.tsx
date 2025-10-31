@@ -1,11 +1,7 @@
 import { useEffect, useRef } from 'react'
 import * as echarts from 'echarts'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { ArpaEntry } from '@/data/arpaData'
-
-interface ArpaChartProps {
-  data: ArpaEntry[]
-}
+import { ArpaChartProps } from '../../types/dashboardData'
 
 export function ArpaChart({ data }: ArpaChartProps) {
   const chartRef = useRef<HTMLDivElement>(null)
@@ -62,7 +58,7 @@ export function ArpaChart({ data }: ArpaChartProps) {
             // Add percentage change if available
             let changeText = ''
             const entry = data[params[0].dataIndex]
-            if (entry['percentage-change'] !== undefined) {
+            if (entry['percentage-change'] !== undefined && entry['percentage-change'] !== null) {
               const changeSign = entry['percentage-change'] > 0 ? '+' : ''
               const changeColor = entry['percentage-change'] > 0 ? '#10b981' : '#ef4444'
               changeText = `<span style="color: ${changeColor}; font-size: 11px;"> (${changeSign}${entry['percentage-change']}%)</span>`

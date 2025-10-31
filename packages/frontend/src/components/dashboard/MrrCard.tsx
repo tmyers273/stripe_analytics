@@ -1,9 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { ArrEntry } from '@/data/mrrData'
-
-interface MrrCardProps {
-  data: ArrEntry[]
-}
+import { Card, CardHeader, CardTitle } from '@/components/ui/card'
+import { MrrCardProps } from '../../types/dashboardData'
 
 export function MrrCard({ data }: MrrCardProps) {
   // Calculate current MRR and percentage change from summary data

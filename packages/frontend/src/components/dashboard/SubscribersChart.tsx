@@ -1,11 +1,7 @@
 import { useEffect, useRef } from 'react'
 import * as echarts from 'echarts'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { SubscribersEntry } from '@/data/subscribersData'
-
-interface SubscribersChartProps {
-  data: SubscribersEntry[]
-}
+import { SubscribersChartProps } from '../../types/dashboardData'
 
 export function SubscribersChart({ data }: SubscribersChartProps) {
   const chartRef = useRef<HTMLDivElement>(null)
@@ -62,7 +58,7 @@ export function SubscribersChart({ data }: SubscribersChartProps) {
             // Add percentage change if available
             let changeText = ''
             const entry = data[params[0].dataIndex]
-            if (entry['percentage-change'] !== undefined) {
+            if (entry['percentage-change'] !== undefined && entry['percentage-change'] !== null) {
               const changeSign = entry['percentage-change'] > 0 ? '+' : ''
               const changeColor = entry['percentage-change'] > 0 ? '#10b981' : '#ef4444'
               changeText = `<span style="color: ${changeColor}; font-size: 11px;"> (${changeSign}${entry['percentage-change']}%)</span>`

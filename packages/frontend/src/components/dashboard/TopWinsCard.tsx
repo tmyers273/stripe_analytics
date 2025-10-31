@@ -8,8 +8,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { TopWinsEntry } from '../../types/dashboardData'
 
-const topWinsData = [
+const topWinsData: TopWinsEntry[] = [
   {
     customer: "Ecom Republic Pty Ltd",
     mrr: 29,

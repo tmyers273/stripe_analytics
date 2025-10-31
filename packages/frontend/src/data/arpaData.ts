@@ -1,18 +1,6 @@
-export interface ArpaEntry {
-  date: string
-  value: number
-  "percentage-change"?: number
-}
+import { ArpaData } from '../types/dashboardData'
 
-export const arpaData: {
-  entries: ArpaEntry[]
-  summary: {
-    metric: string
-    current: number
-    previous: number
-    "percentage-change": number
-  }
-} = {
+export const arpaData: ArpaData = {
   "entries": [
     {
       "date": "2023-10-31",

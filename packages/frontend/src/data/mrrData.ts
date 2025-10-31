@@ -1,67 +1,6 @@
-export interface MrrEntry {
-  date: string
-  new_biz_mrr: number
-  new_biz_count: number
-  new_biz_activity_count: number
-  new_biz_customer_count: number
-  expansion_mrr: number
-  expansion_count: number
-  expansion_activity_count: number
-  expansion_customer_count: number
-  contraction_mrr: number
-  contraction_count: number
-  contraction_activity_count: number
-  contraction_customer_count: number
-  churn_mrr: number
-  churn_count: number
-  churn_activity_count: number
-  churn_customer_count: number
-  reactivation_mrr: number
-  reactivation_count: number
-  reactivation_activity_count: number
-  reactivation_customer_count: number
-  entered_mrr: number
-  entered_count: number
-  entered_activity_count: number
-  entered_customer_count: number
-  left_mrr: number
-  left_count: number
-  left_activity_count: number
-  left_customer_count: number
-  net_movement_mrr: number
-  net_movement_arr: number
-  original_new_biz_mrr: null
-  original_new_biz_activity_count: null
-  original_new_biz_customer_count: null
-  original_churn_mrr: null
-  original_churn_activity_count: null
-  original_churn_customer_count: null
-  original_reactivation_mrr: null
-  original_reactivation_activity_count: null
-  original_reactivation_customer_count: null
-  reclassified_new_biz_mrr: null
-  reclassified_new_biz_activity_count: null
-  reclassified_new_biz_customer_count: null
-  reclassified_churn_mrr: null
-  reclassified_churn_activity_count: null
-  reclassified_churn_customer_count: null
-  reclassified_reactivation_mrr: null
-  reclassified_reactivation_activity_count: null
-  reclassified_reactivation_customer_count: null
-  "percentage-change"?: null
-}
+import { MrrData, ArrData, MrrEntry, ArrEntry } from '../types/dashboardData'
 
-export interface ArrEntry {
-  date: string
-  value: number
-  value_in_usd: number
-  "percentage-change"?: number
-}
-
-export const mrrData: {
-  entries: MrrEntry[]
-  summary: any[]
-} = {
+export const mrrData: MrrData = {
   "entries": [
     {
       "date": "2023-10-31",
@@ -1386,15 +1325,7 @@ export function calculateArrData(mrrEntries: MrrEntry[]): ArrEntry[] {
 }
 
 // New ARR data provided by user
-export const arrDataNew: {
-  entries: ArrEntry[]
-  summary: {
-    metric: string
-    current: number
-    previous: number
-    "percentage-change": number
-  }
-} = {
+export const arrDataNew: ArrData = {
   "entries": [
     {
       "date": "2023-10-31",
@@ -1555,25 +1486,29 @@ export const arrDataNew: {
 }
 
 // MRR Growth Data
-export const mrrGrowthData = {
+export const mrrGrowthData: ArrData = {
   "entries": [
     {
       "date": "2025-07-31",
-      "value": 7443827
+      "value": 7443827,
+      "value_in_usd": 7443827
     },
     {
       "date": "2025-08-31",
       "value": 7670527,
+      "value_in_usd": 7670527,
       "percentage-change": 3.05
     },
     {
       "date": "2025-09-30",
       "value": 8013169,
+      "value_in_usd": 8013169,
       "percentage-change": 4.47
     },
     {
       "date": "2025-10-31",
       "value": 8205087,
+      "value_in_usd": 8205087,
       "percentage-change": 2.4
     }
   ],

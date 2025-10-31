@@ -8,8 +8,9 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Separator } from "@/components/ui/separator"
 import { ChevronDown } from "lucide-react"
+import { MrrBreakdownEntry } from '../../types/dashboardData'
 
-const mrrBreakdownData = [
+const mrrBreakdownData: MrrBreakdownEntry[] = [
   {
     count: 199,
     label: "New Business MRR",

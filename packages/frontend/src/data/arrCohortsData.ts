@@ -1,17 +1,6 @@
-export interface ArrCohortsEntry {
-  date: string
-  value: number
-  value_in_usd: number
-  "percentage-change"?: number
-}
+import { ArrCohortsData } from '../types/dashboardData'
 
-export const arrCohortsData: {
-  cohort2020: ArrCohortsEntry[]
-  cohort2021: ArrCohortsEntry[]
-  cohort2022: ArrCohortsEntry[]
-  cohort2023: ArrCohortsEntry[]
-  cohort2024: ArrCohortsEntry[]
-} = {
+export const arrCohortsData: ArrCohortsData = {
   cohort2020: [
     {
       "date": "2020-12-31",
