@@ -51,6 +51,13 @@ export interface MrrEntry {
   "percentage-change"?: null
 }
 
+export interface ArrEntry {
+  date: string
+  value: number
+  value_in_usd: number
+  "percentage-change"?: number
+}
+
 export const mrrData: {
   entries: MrrEntry[]
   summary: any[]
@@ -1358,3 +1365,194 @@ export const mrrData: {
   ],
   "summary": []
 }
+
+// Calculate ARR data from MRR entries
+export function calculateArrData(mrrEntries: MrrEntry[]): ArrEntry[] {
+  let cumulativeMrr = 0
+  
+  return mrrEntries.map(entry => {
+    // Add current month's net movement to cumulative MRR
+    cumulativeMrr += entry.net_movement_mrr
+    
+    // ARR is cumulative MRR multiplied by 12
+    const arr = cumulativeMrr * 12
+    
+    return {
+      date: entry.date,
+      value: arr,
+      value_in_usd: arr
+    }
+  })
+}
+
+// New ARR data provided by user
+export const arrDataNew: {
+  entries: ArrEntry[]
+  summary: {
+    metric: string
+    current: number
+    previous: number
+    "percentage-change": number
+  }
+} = {
+  "entries": [
+    {
+      "date": "2023-10-31",
+      "value": 16848720,
+      "value_in_usd": 16848720
+    },
+    {
+      "date": "2023-11-30",
+      "value": 18730632,
+      "value_in_usd": 18730632,
+      "percentage-change": 11.17
+    },
+    {
+      "date": "2023-12-31",
+      "value": 20068572,
+      "value_in_usd": 20068572,
+      "percentage-change": 7.14
+    },
+    {
+      "date": "2024-01-31",
+      "value": 22281300,
+      "value_in_usd": 22281300,
+      "percentage-change": 11.03
+    },
+    {
+      "date": "2024-02-29",
+      "value": 25380156,
+      "value_in_usd": 25380156,
+      "percentage-change": 13.91
+    },
+    {
+      "date": "2024-03-31",
+      "value": 29507472,
+      "value_in_usd": 29507472,
+      "percentage-change": 16.26
+    },
+    {
+      "date": "2024-04-30",
+      "value": 33631884,
+      "value_in_usd": 33631884,
+      "percentage-change": 13.98
+    },
+    {
+      "date": "2024-05-31",
+      "value": 37045536,
+      "value_in_usd": 37045536,
+      "percentage-change": 10.15
+    },
+    {
+      "date": "2024-06-30",
+      "value": 40854288,
+      "value_in_usd": 40854288,
+      "percentage-change": 10.28
+    },
+    {
+      "date": "2024-07-31",
+      "value": 45287772,
+      "value_in_usd": 45287772,
+      "percentage-change": 10.85
+    },
+    {
+      "date": "2024-08-31",
+      "value": 50646576,
+      "value_in_usd": 50646576,
+      "percentage-change": 11.83
+    },
+    {
+      "date": "2024-09-30",
+      "value": 55123356,
+      "value_in_usd": 55123356,
+      "percentage-change": 8.84
+    },
+    {
+      "date": "2024-10-31",
+      "value": 60239940,
+      "value_in_usd": 60239940,
+      "percentage-change": 9.28
+    },
+    {
+      "date": "2024-11-30",
+      "value": 64041816,
+      "value_in_usd": 64041816,
+      "percentage-change": 6.31
+    },
+    {
+      "date": "2024-12-31",
+      "value": 66903108,
+      "value_in_usd": 66903108,
+      "percentage-change": 4.47
+    },
+    {
+      "date": "2025-01-31",
+      "value": 67290480,
+      "value_in_usd": 67290480,
+      "percentage-change": 0.58
+    },
+    {
+      "date": "2025-02-28",
+      "value": 71465628,
+      "value_in_usd": 71465628,
+      "percentage-change": 6.2
+    },
+    {
+      "date": "2025-03-31",
+      "value": 76555428,
+      "value_in_usd": 76555428,
+      "percentage-change": 7.12
+    },
+    {
+      "date": "2025-04-30",
+      "value": 80761596,
+      "value_in_usd": 80761596,
+      "percentage-change": 5.49
+    },
+    {
+      "date": "2025-05-31",
+      "value": 84752088,
+      "value_in_usd": 84752088,
+      "percentage-change": 4.94
+    },
+    {
+      "date": "2025-06-30",
+      "value": 86686572,
+      "value_in_usd": 86686572,
+      "percentage-change": 2.28
+    },
+    {
+      "date": "2025-07-31",
+      "value": 89325924,
+      "value_in_usd": 89325924,
+      "percentage-change": 3.04
+    },
+    {
+      "date": "2025-08-31",
+      "value": 92046324,
+      "value_in_usd": 92046324,
+      "percentage-change": 3.05
+    },
+    {
+      "date": "2025-09-30",
+      "value": 96158028,
+      "value_in_usd": 96158028,
+      "percentage-change": 4.47
+    },
+    {
+      "date": "2025-10-31",
+      "value": 98461044,
+      "value_in_usd": 98461044,
+      "percentage-change": 2.4
+    }
+  ],
+  "summary": {
+    "metric": "arr_growth",
+    "current": 98461044,
+    "previous": 96300732,
+    "percentage-change": 2.24
+  }
+}
+
+// Generate the ARR data (keeping the old one for backward compatibility)
+export const arrData = calculateArrData(mrrData.entries)

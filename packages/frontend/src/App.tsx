@@ -1,6 +1,3 @@
-import { observer } from 'mobx-react-lite'
-import { useCounterStore } from './stores/counterStore'
-import { Button } from './components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './components/ui/tabs'
 import { MainLayout } from './components/layout/main-layout'
@@ -8,11 +5,10 @@ import { DashboardHeader } from './components/dashboard/DashboardHeader'
 import { TopWinsCard } from './components/dashboard/TopWinsCard'
 import { MrrBreakdownCard } from './components/dashboard/MrrBreakdownCard'
 import { MrrMovementsChart } from './components/dashboard/MrrMovementsChart'
-import { mrrData } from './data/mrrData'
+import { ArrChart } from './components/dashboard/ArrChart'
+import { mrrData, arrDataNew } from './data/mrrData'
 
-const App = observer(() => {
-  const counterStore = useCounterStore()
-
+const App = () => {
   return (
     <MainLayout>
       <div className="space-y-6">
@@ -40,20 +36,13 @@ const App = observer(() => {
                 <MrrBreakdownCard />
               </div>
 
-              <MrrMovementsChart data={mrrData.entries} />
+              <div className="grid gap-6 lg:grid-cols-2">
+                <MrrMovementsChart data={mrrData.entries} />
+                <ArrChart data={arrDataNew.entries} />
+              </div>
             </div>
 
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Counter Demo</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{counterStore.count}</div>
-                  <p className="text-xs text-muted-foreground">MobX state management</p>
-                </CardContent>
-              </Card>
-              
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
@@ -83,40 +72,17 @@ const App = observer(() => {
                   <p className="text-xs text-muted-foreground">+19% from last month</p>
                 </CardContent>
               </Card>
+              
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Current ARR</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">$98.5M</div>
+                  <p className="text-xs text-muted-foreground">+2.4% from last month</p>
+                </CardContent>
+              </Card>
             </div>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Counter Controls</CardTitle>
-                <CardDescription>
-                  Demonstration of MobX state management with API integration
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex gap-2">
-                  <Button 
-                    onClick={() => counterStore.increment()} 
-                    className="flex-1"
-                  >
-                    Increment
-                  </Button>
-                  <Button 
-                    onClick={() => counterStore.decrement()} 
-                    variant="outline"
-                    className="flex-1"
-                  >
-                    Decrement
-                  </Button>
-                  <Button 
-                    onClick={() => counterStore.reset()} 
-                    variant="destructive"
-                    className="flex-1"
-                  >
-                    Reset
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
           </TabsContent>
           
           <TabsContent value="analytics" className="space-y-4">
@@ -164,6 +130,6 @@ const App = observer(() => {
       </div>
     </MainLayout>
   )
-})
+}
 
 export default App
