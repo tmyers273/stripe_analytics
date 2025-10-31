@@ -76,11 +76,11 @@ export function TopWinsCard() {
           </TableHeader>
           <TableBody>
             {topWinsData.map((row, index) => (
-              <TableRow key={index}>
-                <TableCell className="font-medium">{row.customer}</TableCell>
-                <TableCell className="text-right">${row.mrr}</TableCell>
-                <TableCell className="text-right">${row.arr}</TableCell>
-                <TableCell className="text-muted-foreground text-sm">
+              <TableRow key={index} className="border-b-0">
+                <TableCell className="py-2">{row.customer}</TableCell>
+                <TableCell className="text-right py-2">${row.mrr}</TableCell>
+                <TableCell className="text-right py-2">${row.arr}</TableCell>
+                <TableCell className="text-muted-foreground text-sm py-2">
                   {row.plan}
                 </TableCell>
               </TableRow>
