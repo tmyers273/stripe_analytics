@@ -232,7 +232,7 @@ export function NewBizReactivationChart({ data }: NewBizReactivationChartProps) 
   }, [])
 
   return (
-    <Card className="h-[320px]">
+    <Card className="h-full">
       <CardHeader>
         <CardTitle className="text-base font-semibold">
           New Biz + Reactivations - Quarterly Growth
@@ -241,7 +241,7 @@ export function NewBizReactivationChart({ data }: NewBizReactivationChartProps) 
       <CardContent className="flex-1 p-4 pt-2">
         <div 
           ref={chartRef} 
-          style={{ width: '100%', height: '240px' }}
+          className="w-full h-full"
         />
       </CardContent>
     </Card>

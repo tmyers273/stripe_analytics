@@ -253,7 +253,7 @@ export function ArrCohortsChart({ data }: ArrCohortsChartProps) {
   }, [])
 
   return (
-    <Card className="h-[320px]">
+    <Card className="h-full">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-base font-semibold">
           ARR Cohorts
@@ -265,7 +265,7 @@ export function ArrCohortsChart({ data }: ArrCohortsChartProps) {
       <CardContent className="flex-1 p-4 pt-2">
         <div 
           ref={chartRef} 
-          style={{ width: '100%', height: '240px' }}
+          className="w-full h-full"
         />
       </CardContent>
     </Card>
