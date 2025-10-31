@@ -1,29 +1,26 @@
 import { useEffect, useRef } from 'react'
 import * as echarts from 'echarts'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { ArrEntry } from '@/data/mrrData'
+import { ArpaEntry } from '@/data/arpaData'
 
-interface ArrChartProps {
-  data: ArrEntry[]
+interface ArpaChartProps {
+  data: ArpaEntry[]
 }
 
-export function ArrChart({ data }: ArrChartProps) {
+export function ArpaChart({ data }: ArpaChartProps) {
   const chartRef = useRef<HTMLDivElement>(null)
   const chartInstance = useRef<echarts.ECharts | null>(null)
 
-  // Calculate current ARR and percentage change
+  // Calculate current ARPA and percentage change
   const currentEntry = data[data.length - 1]
   const previousEntry = data.length > 1 ? data[data.length - 2] : null
   
-  const currentArr = currentEntry ? currentEntry.value / 100 : 0 // Convert cents to dollars
+  const currentArpa = currentEntry ? currentEntry.value : 0
   const percentageChange = currentEntry && previousEntry && previousEntry.value !== 0 
     ? ((currentEntry.value - previousEntry.value) / previousEntry.value) * 100
     : 0
 
   const formatCurrency = (value: number) => {
-    if (value >= 1000000) {
-      return `$${(value / 1000000).toFixed(1)}M`
-    }
     return `$${value.toLocaleString()}`
   }
 
@@ -41,7 +38,7 @@ export function ArrChart({ data }: ArrChartProps) {
       return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
     })
 
-    const arrValues = data.map(item => item.value)
+    const arpaValues = data.map(item => item.value)
 
     const option: echarts.EChartsOption = {
       tooltip: {
@@ -60,9 +57,7 @@ export function ArrChart({ data }: ArrChartProps) {
           let tooltip = `<div style="font-weight: bold;">${monthYear}</div>`
           
           params.forEach((param: any) => {
-            // Convert cents to dollars
-            const valueInDollars = param.value / 100
-            const formattedValue = `$${valueInDollars.toLocaleString()}`
+            const formattedValue = formatCurrency(param.value)
             
             // Add percentage change if available
             let changeText = ''
@@ -75,7 +70,7 @@ export function ArrChart({ data }: ArrChartProps) {
             
             tooltip += `<div style="display: flex; align-items: center; margin: 2px 0;">
               <span style="display: inline-block; width: 10px; height: 10px; background-color: ${param.color}; border-radius: 2px; margin-right: 8px;"></span>
-              <span>ARR: ${formattedValue}${changeText}</span>
+              <span>ARPA: ${formattedValue}${changeText}</span>
             </div>`
           })
           
@@ -100,9 +95,9 @@ export function ArrChart({ data }: ArrChartProps) {
       },
       series: [
         {
-          name: 'Annual Run Rate',
+          name: 'ARPA',
           type: 'line',
-          data: arrValues,
+          data: arpaValues,
           smooth: true,
           lineStyle: {
             color: '#3b82f6',
@@ -157,10 +152,10 @@ export function ArrChart({ data }: ArrChartProps) {
     <Card className="h-[320px]">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-base font-semibold">
-          Annual Run Rate (ARR)
+          Average Revenue per Account (ARPA)
         </CardTitle>
         <div className="flex items-center">
-          <div className="text-2xl font-bold">{formatCurrency(currentArr)}</div>
+          <div className="text-2xl font-bold">{formatCurrency(currentArpa)}</div>
           <p className={`ml-2 text-xs ${
             percentageChange > 0 ? 'text-green-600' : 
             percentageChange < 0 ? 'text-red-600' : 

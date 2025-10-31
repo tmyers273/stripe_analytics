@@ -1,31 +1,43 @@
 import { useEffect, useRef } from 'react'
 import * as echarts from 'echarts'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { ArrEntry } from '@/data/mrrData'
 
-interface ArrChartProps {
-  data: ArrEntry[]
+export interface ChartEntry {
+  date: string
+  value: number
+  "percentage-change"?: number
 }
 
-export function ArrChart({ data }: ArrChartProps) {
+export interface BaseLineChartProps {
+  data: ChartEntry[]
+  title: string
+  valueFormatter: (value: number) => string
+  color?: string
+  showArea?: boolean
+  showLegend?: boolean
+  seriesName?: string
+}
+
+export function BaseLineChart({ 
+  data, 
+  title, 
+  valueFormatter,
+  color = '#3b82f6',
+  showArea = true,
+  showLegend = false,
+  seriesName = 'Value'
+}: BaseLineChartProps) {
   const chartRef = useRef<HTMLDivElement>(null)
   const chartInstance = useRef<echarts.ECharts | null>(null)
 
-  // Calculate current ARR and percentage change
+  // Calculate current value and percentage change
   const currentEntry = data[data.length - 1]
   const previousEntry = data.length > 1 ? data[data.length - 2] : null
   
-  const currentArr = currentEntry ? currentEntry.value / 100 : 0 // Convert cents to dollars
+  const currentValue = currentEntry ? currentEntry.value : 0
   const percentageChange = currentEntry && previousEntry && previousEntry.value !== 0 
     ? ((currentEntry.value - previousEntry.value) / previousEntry.value) * 100
     : 0
-
-  const formatCurrency = (value: number) => {
-    if (value >= 1000000) {
-      return `$${(value / 1000000).toFixed(1)}M`
-    }
-    return `$${value.toLocaleString()}`
-  }
 
   useEffect(() => {
     if (!chartRef.current) return
@@ -41,7 +53,7 @@ export function ArrChart({ data }: ArrChartProps) {
       return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
     })
 
-    const arrValues = data.map(item => item.value)
+    const values = data.map(item => item.value)
 
     const option: echarts.EChartsOption = {
       tooltip: {
@@ -60,14 +72,12 @@ export function ArrChart({ data }: ArrChartProps) {
           let tooltip = `<div style="font-weight: bold;">${monthYear}</div>`
           
           params.forEach((param: any) => {
-            // Convert cents to dollars
-            const valueInDollars = param.value / 100
-            const formattedValue = `$${valueInDollars.toLocaleString()}`
+            const formattedValue = valueFormatter(param.value)
             
             // Add percentage change if available
             let changeText = ''
             const entry = data[params[0].dataIndex]
-            if (entry['percentage-change'] !== undefined) {
+            if (entry && entry['percentage-change'] !== undefined) {
               const changeSign = entry['percentage-change'] > 0 ? '+' : ''
               const changeColor = entry['percentage-change'] > 0 ? '#10b981' : '#ef4444'
               changeText = `<span style="color: ${changeColor}; font-size: 11px;"> (${changeSign}${entry['percentage-change']}%)</span>`
@@ -75,18 +85,25 @@ export function ArrChart({ data }: ArrChartProps) {
             
             tooltip += `<div style="display: flex; align-items: center; margin: 2px 0;">
               <span style="display: inline-block; width: 10px; height: 10px; background-color: ${param.color}; border-radius: 2px; margin-right: 8px;"></span>
-              <span>ARR: ${formattedValue}${changeText}</span>
+              <span>${seriesName}: ${formattedValue}${changeText}</span>
             </div>`
           })
           
           return tooltip
         },
       },
+      legend: showLegend ? {
+        data: [seriesName],
+        top: 0,
+        textStyle: {
+          fontSize: 12,
+        },
+      } : undefined,
       grid: {
         left: '0%',
         right: '0%',
         bottom: '0%',
-        top: '0%',
+        top: showLegend ? '15%' : '3%',
         containLabel: false,
       },
       xAxis: {
@@ -100,18 +117,17 @@ export function ArrChart({ data }: ArrChartProps) {
       },
       series: [
         {
-          name: 'Annual Run Rate',
+          name: seriesName,
           type: 'line',
-          data: arrValues,
-          smooth: true,
+          data: values,
           lineStyle: {
-            color: '#3b82f6',
+            color,
             width: 3
           },
           itemStyle: {
-            color: '#3b82f6'
+            color
           },
-          areaStyle: {
+          areaStyle: showArea ? {
             color: {
               type: 'linear',
               x: 0,
@@ -119,12 +135,12 @@ export function ArrChart({ data }: ArrChartProps) {
               x2: 0,
               y2: 1,
               colorStops: [{
-                offset: 0, color: 'rgba(59, 130, 246, 0.3)'
+                offset: 0, color: `${color}4d` // Add transparency
               }, {
-                offset: 1, color: 'rgba(59, 130, 246, 0.05)'
+                offset: 1, color: `${color}0d` // Add more transparency
               }]
             }
-          }
+          } : undefined
         }
       ]
     }
@@ -141,7 +157,7 @@ export function ArrChart({ data }: ArrChartProps) {
     return () => {
       window.removeEventListener('resize', handleResize)
     }
-  }, [data])
+  }, [data, valueFormatter, color, showArea, showLegend, seriesName])
 
   // Cleanup on unmount
   useEffect(() => {
@@ -157,10 +173,10 @@ export function ArrChart({ data }: ArrChartProps) {
     <Card className="h-[320px]">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-base font-semibold">
-          Annual Run Rate (ARR)
+          {title}
         </CardTitle>
         <div className="flex items-center">
-          <div className="text-2xl font-bold">{formatCurrency(currentArr)}</div>
+          <div className="text-2xl font-bold">{valueFormatter(currentValue)}</div>
           <p className={`ml-2 text-xs ${
             percentageChange > 0 ? 'text-green-600' : 
             percentageChange < 0 ? 'text-red-600' : 
@@ -170,10 +186,10 @@ export function ArrChart({ data }: ArrChartProps) {
           </p>
         </div>
       </CardHeader>
-      <CardContent className="flex-1 p-4 pt-2">
+      <CardContent className="flex-1 p-4">
         <div 
           ref={chartRef} 
-          style={{ width: '100%', height: '240px' }}
+          style={{ width: '100%', height: '250px' }}
         />
       </CardContent>
     </Card>

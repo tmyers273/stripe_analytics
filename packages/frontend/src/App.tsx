@@ -8,6 +8,14 @@ import { MrrMovementsChart } from './components/dashboard/MrrMovementsChart'
 import { ArrChart } from './components/dashboard/ArrChart'
 import { MrrCard } from './components/dashboard/MrrCard'
 import { mrrData, arrDataNew, mrrGrowthData } from './data/mrrData'
+import { NewBizReactivationChart } from './components/dashboard/NewBizReactivationChart'
+import { newBizReactivationData } from './data/newBizReactivationData'
+import { SubscribersChart } from './components/dashboard/SubscribersChart'
+import { subscribersData } from './data/subscribersData'
+import { ArpaChart } from './components/dashboard/ArpaChart'
+import { arpaData } from './data/arpaData'
+import { ArrCohortsChart } from './components/dashboard/ArrCohortsChart'
+import { arrCohortsData } from './data/arrCohortsData'
 
 const App = () => {
   return (
@@ -38,6 +46,16 @@ const App = () => {
 
               <div className="grid gap-6 lg:grid-cols-2">
                 <MrrCard data={mrrGrowthData.entries} />
+                <SubscribersChart data={subscribersData.entries} />
+              </div>
+
+              <div className="grid gap-6 lg:grid-cols-2">
+                <ArpaChart data={arpaData.entries} />
+                <ArrCohortsChart data={arrCohortsData} />
+              </div>
+
+              <div className="grid gap-6 lg:grid-cols-1">
+                <NewBizReactivationChart data={newBizReactivationData.entries} />
               </div>
             </div>
           </TabsContent>

@@ -1,30 +1,27 @@
 import { useEffect, useRef } from 'react'
 import * as echarts from 'echarts'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { ArrEntry } from '@/data/mrrData'
+import { SubscribersEntry } from '@/data/subscribersData'
 
-interface ArrChartProps {
-  data: ArrEntry[]
+interface SubscribersChartProps {
+  data: SubscribersEntry[]
 }
 
-export function ArrChart({ data }: ArrChartProps) {
+export function SubscribersChart({ data }: SubscribersChartProps) {
   const chartRef = useRef<HTMLDivElement>(null)
   const chartInstance = useRef<echarts.ECharts | null>(null)
 
-  // Calculate current ARR and percentage change
+  // Calculate current subscribers and percentage change
   const currentEntry = data[data.length - 1]
   const previousEntry = data.length > 1 ? data[data.length - 2] : null
   
-  const currentArr = currentEntry ? currentEntry.value / 100 : 0 // Convert cents to dollars
+  const currentSubscribers = currentEntry ? currentEntry.value : 0
   const percentageChange = currentEntry && previousEntry && previousEntry.value !== 0 
     ? ((currentEntry.value - previousEntry.value) / previousEntry.value) * 100
     : 0
 
-  const formatCurrency = (value: number) => {
-    if (value >= 1000000) {
-      return `$${(value / 1000000).toFixed(1)}M`
-    }
-    return `$${value.toLocaleString()}`
+  const formatNumber = (value: number) => {
+    return value.toLocaleString()
   }
 
   useEffect(() => {
@@ -41,7 +38,7 @@ export function ArrChart({ data }: ArrChartProps) {
       return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
     })
 
-    const arrValues = data.map(item => item.value)
+    const subscriberValues = data.map(item => item.value)
 
     const option: echarts.EChartsOption = {
       tooltip: {
@@ -60,9 +57,7 @@ export function ArrChart({ data }: ArrChartProps) {
           let tooltip = `<div style="font-weight: bold;">${monthYear}</div>`
           
           params.forEach((param: any) => {
-            // Convert cents to dollars
-            const valueInDollars = param.value / 100
-            const formattedValue = `$${valueInDollars.toLocaleString()}`
+            const formattedValue = formatNumber(param.value)
             
             // Add percentage change if available
             let changeText = ''
@@ -75,7 +70,7 @@ export function ArrChart({ data }: ArrChartProps) {
             
             tooltip += `<div style="display: flex; align-items: center; margin: 2px 0;">
               <span style="display: inline-block; width: 10px; height: 10px; background-color: ${param.color}; border-radius: 2px; margin-right: 8px;"></span>
-              <span>ARR: ${formattedValue}${changeText}</span>
+              <span>Subscribers: ${formattedValue}${changeText}</span>
             </div>`
           })
           
@@ -100,9 +95,9 @@ export function ArrChart({ data }: ArrChartProps) {
       },
       series: [
         {
-          name: 'Annual Run Rate',
+          name: 'Subscribers',
           type: 'line',
-          data: arrValues,
+          data: subscriberValues,
           smooth: true,
           lineStyle: {
             color: '#3b82f6',
@@ -157,10 +152,10 @@ export function ArrChart({ data }: ArrChartProps) {
     <Card className="h-[320px]">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-base font-semibold">
-          Annual Run Rate (ARR)
+          Subscribers
         </CardTitle>
         <div className="flex items-center">
-          <div className="text-2xl font-bold">{formatCurrency(currentArr)}</div>
+          <div className="text-2xl font-bold">{formatNumber(currentSubscribers)}</div>
           <p className={`ml-2 text-xs ${
             percentageChange > 0 ? 'text-green-600' : 
             percentageChange < 0 ? 'text-red-600' : 

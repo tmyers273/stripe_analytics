@@ -1,22 +1,13 @@
 import { useEffect, useRef } from 'react'
 import * as echarts from 'echarts'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { NewBizReactivationEntry } from '@/data/newBizReactivationData'
 
-interface MrrData {
-  date: string
-  new_biz_mrr: number
-  expansion_mrr: number
-  contraction_mrr: number
-  churn_mrr: number
-  reactivation_mrr: number
-  net_movement_mrr: number
+interface NewBizReactivationChartProps {
+  data: NewBizReactivationEntry[]
 }
 
-interface MrrMovementsChartProps {
-  data: MrrData[]
-}
-
-export function MrrMovementsChart({ data }: MrrMovementsChartProps) {
+export function NewBizReactivationChart({ data }: NewBizReactivationChartProps) {
   const chartRef = useRef<HTMLDivElement>(null)
   const chartInstance = useRef<echarts.ECharts | null>(null)
 
@@ -28,11 +19,23 @@ export function MrrMovementsChart({ data }: MrrMovementsChartProps) {
       chartInstance.current = echarts.init(chartRef.current)
     }
 
-    // Prepare data for ECharts
-    const dates = data.map(item => {
+    // Prepare data for ECharts - filter for quarter-end dates
+    const quarterData = data.filter(item => {
       const date = new Date(item.date)
-      return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+      const month = date.getMonth() + 1
+      return month === 3 || month === 6 || month === 9 || month === 12
     })
+
+    const dates = quarterData.map(item => {
+      const date = new Date(item.date)
+      return `Q${Math.floor((date.getMonth() + 3) / 3)} ${date.getFullYear()}`
+    })
+
+    const newBizMrr = quarterData.map(item => item.new_biz_mrr)
+    const expansionMrr = quarterData.map(item => item.expansion_mrr)
+    const reactivationMrr = quarterData.map(item => item.reactivation_mrr)
+    const contractionMrr = quarterData.map(item => item.contraction_mrr)
+    const churnMrr = quarterData.map(item => item.churn_mrr)
 
     const option: echarts.EChartsOption = {
       tooltip: {
@@ -41,53 +44,45 @@ export function MrrMovementsChart({ data }: MrrMovementsChartProps) {
           type: 'shadow',
         },
         formatter: (params: any) => {
-          // Get the original date from the data
-          const originalDate = data[params[0].dataIndex].date
+          const dataIndex = params[0].dataIndex
+          const originalDate = quarterData[dataIndex].date
           const date = new Date(originalDate)
-          const monthYear = date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+          const quarter = `Q${Math.floor((date.getMonth() + 3) / 3)} ${date.getFullYear()}`
           
-          // Calculate date range (first day to last day of month)
-          const firstDay = new Date(date.getFullYear(), date.getMonth(), 1)
-          const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0)
-          const firstDayFormatted = firstDay.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-          const lastDayFormatted = lastDay.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+          let tooltip = `<div style="font-weight: bold;">${quarter}</div>`
           
-          let tooltip = `<div style="font-weight: bold;">${monthYear}</div>`
-          tooltip += `<div style="font-size: 12px; color: #666; margin-bottom: 8px;">${firstDayFormatted} - ${lastDayFormatted}</div>`
+          // Get previous quarter data for comparison
+          const currentIndex = params[0].dataIndex
+          const previousQuarterData = currentIndex > 0 ? quarterData[currentIndex - 1] : null
           
           let total = 0
           
-          // Get previous month data for comparison
-          const currentIndex = params[0].dataIndex
-          const previousMonthData = currentIndex > 0 ? data[currentIndex - 1] : null
-          
           params.forEach((param: any) => {
             if (param.value !== 0) {
-              // Convert cents to dollars
               const valueInDollars = param.value / 100
               const formattedValue = valueInDollars > 0 ? `+$${valueInDollars.toLocaleString()}` : `-$${Math.abs(valueInDollars).toLocaleString()}`
               
-              // Calculate month-over-month percentage change
+              // Calculate quarter-over-quarter percentage change
               let changeText = ''
-              if (previousMonthData) {
+              if (previousQuarterData) {
                 const currentValue = param.value
                 let previousValue = 0
                 
                 switch(param.seriesName) {
                   case 'New Business':
-                    previousValue = previousMonthData.new_biz_mrr
+                    previousValue = previousQuarterData.new_biz_mrr
                     break
                   case 'Expansion':
-                    previousValue = previousMonthData.expansion_mrr
+                    previousValue = previousQuarterData.expansion_mrr
                     break
                   case 'Reactivation':
-                    previousValue = previousMonthData.reactivation_mrr
+                    previousValue = previousQuarterData.reactivation_mrr
                     break
                   case 'Contraction':
-                    previousValue = previousMonthData.contraction_mrr
+                    previousValue = previousQuarterData.contraction_mrr
                     break
                   case 'Churn':
-                    previousValue = previousMonthData.churn_mrr
+                    previousValue = previousQuarterData.churn_mrr
                     break
                 }
                 
@@ -96,7 +91,6 @@ export function MrrMovementsChart({ data }: MrrMovementsChartProps) {
                 if (previousValue !== 0) {
                   percentChange = ((currentValue - previousValue) / Math.abs(previousValue)) * 100
                 } else if (currentValue !== 0) {
-                  // If previous was 0 and current is not, show as "New"
                   percentChange = 999999
                 }
                 
@@ -125,15 +119,14 @@ export function MrrMovementsChart({ data }: MrrMovementsChartProps) {
           const totalInDollars = total / 100
           let netChangeText = ''
           
-          if (previousMonthData) {
-            const previousTotal = previousMonthData.net_movement_mrr
+          if (previousQuarterData) {
+            const previousTotal = previousQuarterData.net_movement_mrr
             
             // Calculate percentage change
             let netPercentChange = 0
             if (previousTotal !== 0) {
               netPercentChange = ((total - previousTotal) / Math.abs(previousTotal)) * 100
             } else if (total !== 0) {
-              // If previous was 0 and current is not, show as "New"
               netPercentChange = 999999
             }
             
@@ -188,7 +181,7 @@ export function MrrMovementsChart({ data }: MrrMovementsChartProps) {
           emphasis: {
             focus: 'series',
           },
-          data: data.map(item => item.churn_mrr), // Keep as negative values
+          data: churnMrr,
           itemStyle: {
             color: '#ef4444', // red-500
           },
@@ -203,9 +196,9 @@ export function MrrMovementsChart({ data }: MrrMovementsChartProps) {
           emphasis: {
             focus: 'series',
           },
-          data: data.map(item => item.contraction_mrr), // Keep as negative values
+          data: contractionMrr,
           itemStyle: {
-            color: '#dc2626', // red-600 (darker red)
+            color: '#dc2626', // red-600
           },
         },
         {
@@ -218,7 +211,7 @@ export function MrrMovementsChart({ data }: MrrMovementsChartProps) {
           emphasis: {
             focus: 'series',
           },
-          data: data.map(item => item.new_biz_mrr),
+          data: newBizMrr,
           itemStyle: {
             color: '#3b82f6', // blue-500
           },
@@ -233,9 +226,9 @@ export function MrrMovementsChart({ data }: MrrMovementsChartProps) {
           emphasis: {
             focus: 'series',
           },
-          data: data.map(item => item.expansion_mrr),
+          data: expansionMrr,
           itemStyle: {
-            color: '#60a5fa', // blue-400 (lighter blue)
+            color: '#60a5fa', // blue-400
           },
         },
         {
@@ -248,9 +241,9 @@ export function MrrMovementsChart({ data }: MrrMovementsChartProps) {
           emphasis: {
             focus: 'series',
           },
-          data: data.map(item => item.reactivation_mrr),
+          data: reactivationMrr,
           itemStyle: {
-            color: '#93c5fd', // blue-300 (lightest blue)
+            color: '#93c5fd', // blue-300
           },
         },
       ],
@@ -284,7 +277,7 @@ export function MrrMovementsChart({ data }: MrrMovementsChartProps) {
     <Card className="h-[320px]">
       <CardHeader>
         <CardTitle className="text-base font-semibold">
-          MRR Movements - Stacked Bar Chart
+          MRR Movements - Quarterly Stacked Chart
         </CardTitle>
       </CardHeader>
       <CardContent className="flex-1 p-4 pt-2">
