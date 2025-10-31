@@ -3,6 +3,7 @@ import { cors } from 'hono/cors'
 import { logger } from 'hono/logger'
 import { counterRoutes } from './routes/counter'
 import { webhookRoutes } from './routes/stripe-webhook'
+import { dashboardRoutes } from './routes/dashboards'
 
 const app = new Hono()
 
@@ -17,6 +18,7 @@ app.use('*', cors({
 // Routes
 app.route('/api/counter', counterRoutes)
 app.route('/webhook/stripe', webhookRoutes)
+app.route('/api/dashboards', dashboardRoutes)
 
 // Health check
 app.get('/health', (c) => {
@@ -31,16 +33,36 @@ app.get('/', (c) => {
     endpoints: {
       health: '/health',
       counter: '/api/counter',
-      stripeWebhook: '/webhook/stripe'
+      stripeWebhook: '/webhook/stripe',
+      dashboards: '/api/dashboards'
     }
   })
 })
 
 const port = parseInt(process.env.PORT || '3001')
 
-console.log(`🚀 Server starting on port ${port}`)
+// Node runtime - use node:http
+const { createServer } = await import('node:http')
+const server = createServer(async (req, res) => {
+  const response = await app.fetch(new Request(`http://localhost:${port}${req.url}`, {
+    method: req.method,
+    headers: req.headers as HeadersInit,
+    body: req.method !== 'GET' && req.method !== 'HEAD' ? await new Promise<Buffer>((resolve) => {
+      const chunks: Buffer[] = []
+      req.on('data', (chunk) => chunks.push(chunk))
+      req.on('end', () => resolve(Buffer.concat(chunks)))
+    }) : undefined,
+  }))
 
-export default {
-  port,
-  fetch: app.fetch,
-}
+  res.statusCode = response.status
+  response.headers.forEach((value, key) => {
+    res.setHeader(key, value)
+  })
+
+  const body = await response.arrayBuffer()
+  res.end(Buffer.from(body))
+})
+
+server.listen(port, () => {
+  console.log(`✅ Server is listening on http://localhost:${port}`)
+})
