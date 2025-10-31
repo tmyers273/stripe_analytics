@@ -1554,5 +1554,36 @@ export const arrDataNew: {
   }
 }
 
+// MRR Growth Data
+export const mrrGrowthData = {
+  "entries": [
+    {
+      "date": "2025-07-31",
+      "value": 7443827
+    },
+    {
+      "date": "2025-08-31",
+      "value": 7670527,
+      "percentage-change": 3.05
+    },
+    {
+      "date": "2025-09-30",
+      "value": 8013169,
+      "percentage-change": 4.47
+    },
+    {
+      "date": "2025-10-31",
+      "value": 8205087,
+      "percentage-change": 2.4
+    }
+  ],
+  "summary": {
+    "metric": "mrr_growth",
+    "current": 8205087,
+    "previous": 8025061,
+    "percentage-change": 2.24
+  }
+}
+
 // Generate the ARR data (keeping the old one for backward compatibility)
 export const arrData = calculateArrData(mrrData.entries)

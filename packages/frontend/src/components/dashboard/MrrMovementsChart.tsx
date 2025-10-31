@@ -283,14 +283,14 @@ export function MrrMovementsChart({ data }: MrrMovementsChartProps) {
   return (
     <Card className="h-[320px]">
       <CardHeader>
-        <CardTitle className="text-sm font-medium">
+        <CardTitle className="text-base font-semibold">
           MRR Movements - Stacked Bar Chart
         </CardTitle>
       </CardHeader>
       <CardContent className="flex-1 p-4">
         <div 
           ref={chartRef} 
-          style={{ width: '100%', height: '100%' }}
+          style={{ width: '100%', height: '250px' }}
         />
       </CardContent>
     </Card>

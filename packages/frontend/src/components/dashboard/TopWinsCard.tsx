@@ -55,7 +55,7 @@ export function TopWinsCard() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="text-lg">🏆</span>
-            <CardTitle className="text-sm font-medium">
+            <CardTitle className="text-base font-semibold">
               Top wins from this week
             </CardTitle>
           </div>

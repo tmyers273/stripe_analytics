@@ -6,7 +6,8 @@ import { TopWinsCard } from './components/dashboard/TopWinsCard'
 import { MrrBreakdownCard } from './components/dashboard/MrrBreakdownCard'
 import { MrrMovementsChart } from './components/dashboard/MrrMovementsChart'
 import { ArrChart } from './components/dashboard/ArrChart'
-import { mrrData, arrDataNew } from './data/mrrData'
+import { MrrCard } from './components/dashboard/MrrCard'
+import { mrrData, arrDataNew, mrrGrowthData } from './data/mrrData'
 
 const App = () => {
   return (
@@ -40,48 +41,10 @@ const App = () => {
                 <MrrMovementsChart data={mrrData.entries} />
                 <ArrChart data={arrDataNew.entries} />
               </div>
-            </div>
 
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">$45,231.89</div>
-                  <p className="text-xs text-muted-foreground">+20.1% from last month</p>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Active Customers</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">2,350</div>
-                  <p className="text-xs text-muted-foreground">+180.1% from last month</p>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Transactions</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">12,234</div>
-                  <p className="text-xs text-muted-foreground">+19% from last month</p>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Current ARR</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">$98.5M</div>
-                  <p className="text-xs text-muted-foreground">+2.4% from last month</p>
-                </CardContent>
-              </Card>
+              <div className="grid gap-6 lg:grid-cols-2">
+                <MrrCard data={mrrGrowthData.entries} />
+              </div>
             </div>
           </TabsContent>
           

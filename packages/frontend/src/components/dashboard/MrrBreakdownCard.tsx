@@ -46,7 +46,7 @@ export function MrrBreakdownCard() {
     <Card>
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-medium">
+          <CardTitle className="text-base font-semibold">
             MRR Breakdown
           </CardTitle>
           <DropdownMenu>
