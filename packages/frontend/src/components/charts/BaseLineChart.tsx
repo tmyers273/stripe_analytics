@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 export interface ChartEntry {
   date: string
   value: number
-  "percentage-change"?: number
+  "percentage-change"?: number | null
 }
 
 export interface BaseLineChartProps {
@@ -27,7 +27,7 @@ export function BaseLineChart({
   showArea = true,
   showLegend = false,
   seriesName = 'Value',
-  height = 3
+  height = 2
 }: BaseLineChartProps) {
   const chartRef = useRef<HTMLDivElement>(null)
   const chartInstance = useRef<echarts.ECharts | null>(null)
@@ -44,20 +44,41 @@ export function BaseLineChart({
   useEffect(() => {
     if (!chartRef.current) return
 
-    // Initialize or update chart
-    if (!chartInstance.current) {
-      chartInstance.current = echarts.init(chartRef.current)
-    }
+    let retryCount = 0
+    const maxRetries = 10
+    const retryDelay = 200
 
-    // Prepare data for ECharts
-    const dates = data.map(item => {
-      const date = new Date(item.date)
-      return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
-    })
+    const initializeChart = () => {
+      if (!chartRef.current) return
+      
+      // Check if the container has valid dimensions
+      const rect = chartRef.current.getBoundingClientRect()
+      if (rect.width === 0 || rect.height === 0) {
+        retryCount++
+        if (retryCount <= maxRetries) {
+          console.warn(`Chart container has no dimensions, retry ${retryCount}/${maxRetries}...`)
+          setTimeout(initializeChart, retryDelay)
+          return
+        } else {
+          console.error('Chart container still has no dimensions after max retries')
+          return
+        }
+      }
 
-    const values = data.map(item => item.value)
+      // Initialize or update chart
+      if (!chartInstance.current) {
+        chartInstance.current = echarts.init(chartRef.current)
+      }
 
-    const option: echarts.EChartsOption = {
+      // Prepare data for ECharts
+      const dates = data.map(item => {
+        const date = new Date(item.date)
+        return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+      })
+
+      const values = data.map(item => item.value)
+
+      const option: echarts.EChartsOption = {
       tooltip: {
         trigger: 'axis',
         axisPointer: {
@@ -79,7 +100,7 @@ export function BaseLineChart({
             // Add percentage change if available
             let changeText = ''
             const entry = data[params[0].dataIndex]
-            if (entry && entry['percentage-change'] !== undefined) {
+            if (entry && entry['percentage-change'] !== undefined && entry['percentage-change'] !== null) {
               const changeSign = entry['percentage-change'] > 0 ? '+' : ''
               const changeColor = entry['percentage-change'] > 0 ? '#10b981' : '#ef4444'
               changeText = `<span style="color: ${changeColor}; font-size: 11px;"> (${changeSign}${entry['percentage-change']}%)</span>`
@@ -148,6 +169,10 @@ export function BaseLineChart({
     }
 
     chartInstance.current.setOption(option)
+    }
+
+    // Start initialization with a small delay
+    const timer = setTimeout(initializeChart, 100)
 
     // Handle resize
     const handleResize = () => {
@@ -157,6 +182,7 @@ export function BaseLineChart({
     window.addEventListener('resize', handleResize)
 
     return () => {
+      clearTimeout(timer)
       window.removeEventListener('resize', handleResize)
     }
   }, [data, valueFormatter, color, showArea, showLegend, seriesName, height])
@@ -188,10 +214,10 @@ export function BaseLineChart({
           </p>
         </div>
       </CardHeader>
-      <CardContent className="flex-1 p-4">
+      <CardContent className="p-4 pt-2" style={{ height: 'calc(100% - 70px)' }}>
         <div 
           ref={chartRef} 
-          className="w-full h-full"
+          style={{ width: '100%', height: '100%' }}
         />
       </CardContent>
     </Card>

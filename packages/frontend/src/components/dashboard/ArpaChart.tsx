@@ -54,7 +54,6 @@ export function ArpaChart({ data, height }: ArpaChartProps & { height?: number }
           let tooltip = `<div style="font-weight: bold;">${monthYear}</div>`
           
           params.forEach((param: any) => {
-            const valueInDollars = param.value / 100 // Convert cents to dollars
             const formattedValue = formatCurrency(param.value)
             
             // Add percentage change if available

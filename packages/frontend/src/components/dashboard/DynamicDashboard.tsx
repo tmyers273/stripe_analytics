@@ -45,10 +45,10 @@ const WidgetRenderer: React.FC<{ widget: DashboardWidget }> = ({ widget }) => {
         return <MrrCard data={mrrGrowthData.entries} />
       
       case 'customer_growth':
-        return <SubscribersChartRefactored data={subscribersData.entries} height={2} />
+        return <SubscribersChartRefactored data={subscribersData.entries} />
       
       case 'arpa':
-        return <ArpaChartRefactored data={arpaData.entries} height={2} />
+        return <ArpaChartRefactored data={arpaData.entries} />
       
       default:
         return (
@@ -74,7 +74,6 @@ const WidgetRenderer: React.FC<{ widget: DashboardWidget }> = ({ widget }) => {
 
 export const DynamicDashboard: React.FC<DynamicDashboardProps> = ({ config }) => {
   // Calculate the maximum grid position needed
-  const maxX = Math.max(...config.widgets.map(w => w.grid.x + w.grid.width))
   const maxY = Math.max(...config.widgets.map(w => w.grid.y + w.grid.height))
   
   // We want H3 = 320px including gaps between widgets

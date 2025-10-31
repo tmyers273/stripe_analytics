@@ -5,7 +5,7 @@ interface ArpaChartProps {
   height?: number
 }
 
-export function ArpaChartRefactored({ data, height = 2 }: ArpaChartProps) {
+export function ArpaChartRefactored({ data }: ArpaChartProps) {
   const formatCurrency = (value: number) => {
     const valueInDollars = value / 100 // Convert cents to dollars
     return `$${valueInDollars.toLocaleString()}`
@@ -19,7 +19,6 @@ export function ArpaChartRefactored({ data, height = 2 }: ArpaChartProps) {
       color="#3b82f6"
       showArea={true}
       seriesName="ARPA"
-      height={height}
     />
   )
 }

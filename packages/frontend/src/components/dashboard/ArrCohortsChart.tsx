@@ -30,10 +30,31 @@ export function ArrCohortsChart({ data }: ArrCohortsChartProps) {
   useEffect(() => {
     if (!chartRef.current) return
 
-    // Initialize or update chart
-    if (!chartInstance.current) {
-      chartInstance.current = echarts.init(chartRef.current)
-    }
+    let retryCount = 0
+    const maxRetries = 10
+    const retryDelay = 200
+
+    const initializeChart = () => {
+      if (!chartRef.current) return
+      
+      // Check if the container has valid dimensions
+      const rect = chartRef.current.getBoundingClientRect()
+      if (rect.width === 0 || rect.height === 0) {
+        retryCount++
+        if (retryCount <= maxRetries) {
+          console.warn(`ARR Cohorts chart container has no dimensions, retry ${retryCount}/${maxRetries}...`)
+          setTimeout(initializeChart, retryDelay)
+          return
+        } else {
+          console.error('ARR Cohorts chart container still has no dimensions after max retries')
+          return
+        }
+      }
+
+      // Initialize or update chart
+      if (!chartInstance.current) {
+        chartInstance.current = echarts.init(chartRef.current)
+      }
 
     // Prepare data for ECharts
     const dates = data.cohort2020.map(item => {
@@ -229,6 +250,10 @@ export function ArrCohortsChart({ data }: ArrCohortsChartProps) {
     }
 
     chartInstance.current.setOption(option)
+    }
+
+    // Start initialization with a small delay
+    const timer = setTimeout(initializeChart, 100)
 
     // Handle resize
     const handleResize = () => {
@@ -238,6 +263,7 @@ export function ArrCohortsChart({ data }: ArrCohortsChartProps) {
     window.addEventListener('resize', handleResize)
 
     return () => {
+      clearTimeout(timer)
       window.removeEventListener('resize', handleResize)
     }
   }, [data])
@@ -262,10 +288,10 @@ export function ArrCohortsChart({ data }: ArrCohortsChartProps) {
           <div className="text-2xl font-bold">{formatCurrency(currentTotalArr)}</div>
         </div>
       </CardHeader>
-      <CardContent className="flex-1 p-4 pt-2">
+      <CardContent className="p-4 pt-2" style={{ height: 'calc(100% - 70px)' }}>
         <div 
           ref={chartRef} 
-          className="w-full h-full"
+          style={{ width: '100%', height: '100%' }}
         />
       </CardContent>
     </Card>
