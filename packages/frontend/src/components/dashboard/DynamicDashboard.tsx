@@ -3,8 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { DashboardWidget, DashboardConfig } from '../../types/dashboardData'
 import { TopWinsCard } from './TopWinsCard'
 import { MrrBreakdownCard } from './MrrBreakdownCard'
-import { MrrMovementsChart } from './MrrMovementsChart'
-import { ArrChart } from './ArrChart'
+import { MrrMovementsChartRefactored } from './MrrMovementsChartRefactored'
+import { ArrChartRefactored } from './ArrChartRefactored'
 import { MrrCard } from './MrrCard'
 import { SubscribersChartRefactored } from './SubscribersChartRefactored'
 import { ArpaChartRefactored } from './ArpaChartRefactored'
@@ -33,13 +33,13 @@ const WidgetRenderer: React.FC<{ widget: DashboardWidget }> = ({ widget }) => {
         if (widget.kind === 'custom_chart') {
           return <NewBizReactivationChart data={newBizReactivationData.entries} />
         }
-        return <MrrMovementsChart data={mrrData.entries} />
-      
+        return <MrrMovementsChartRefactored data={mrrData.entries} />
+
       case 'arr_growth':
         if (widget.kind === 'custom_chart') {
           return <ArrCohortsChart data={arrCohortsData} />
         }
-        return <ArrChart data={arrDataNew.entries} />
+        return <ArrChartRefactored data={arrDataNew.entries} />
       
       case 'mrr_growth':
         return <MrrCard data={mrrGrowthData.entries} />

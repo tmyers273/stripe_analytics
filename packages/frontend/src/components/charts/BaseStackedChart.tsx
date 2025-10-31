@@ -17,16 +17,22 @@ export interface BaseStackedChartProps {
   data: StackedChartEntry[]
   title: string
   series: StackedChartSeries[]
-  dateFormatter?: (date: string) => string[]
+  dateFormatter?: (date: string) => string
   valueFormatter?: (value: number) => string
+  filterQuarterly?: boolean
+  height?: string
+  showRetry?: boolean
 }
 
-export function BaseStackedChart({ 
-  data, 
-  title, 
+export function BaseStackedChart({
+  data,
+  title,
   series,
   dateFormatter,
-  valueFormatter = (value: number) => `$${(value / 100).toLocaleString()}`
+  valueFormatter = (value: number) => `$${(value / 100).toLocaleString()}`,
+  filterQuarterly = false,
+  height = '320px',
+  showRetry = false
 }: BaseStackedChartProps) {
   const chartRef = useRef<HTMLDivElement>(null)
   const chartInstance = useRef<echarts.ECharts | null>(null)
@@ -34,38 +40,76 @@ export function BaseStackedChart({
   useEffect(() => {
     if (!chartRef.current) return
 
-    // Initialize or update chart
-    if (!chartInstance.current) {
-      chartInstance.current = echarts.init(chartRef.current)
-    }
+    let retryCount = 0
+    const maxRetries = 10
+    const retryDelay = 200
 
-    // Prepare data for ECharts
-    const dates = dateFormatter 
-      ? dateFormatter(data[0]?.date || '')
-      : data.map(item => {
-          const date = new Date(item.date)
-          return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
-        })
+    const initializeChart = () => {
+      if (!chartRef.current) return
 
-    const option: echarts.EChartsOption = {
-      tooltip: {
-        trigger: 'axis',
-        axisPointer: {
-          type: 'shadow',
-        },
-        formatter: (params: any) => {
-          const dataIndex = params[0].dataIndex
-          const originalDate = data[dataIndex].date
-          const date = new Date(originalDate)
-          const displayDate = dateFormatter 
-            ? dates[dataIndex]
-            : date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
-          
-          let tooltip = `<div style="font-weight: bold;">${displayDate}</div>`
-          
-          // Get previous data for comparison
-          const currentIndex = params[0].dataIndex
-          const previousData = currentIndex > 0 ? data[currentIndex - 1] : null
+      // Check if the container has valid dimensions (if showRetry is enabled)
+      if (showRetry) {
+        const rect = chartRef.current.getBoundingClientRect()
+        if (rect.width === 0 || rect.height === 0) {
+          retryCount++
+          if (retryCount <= maxRetries) {
+            console.warn(`Stacked chart container has no dimensions, retry ${retryCount}/${maxRetries}...`)
+            setTimeout(initializeChart, retryDelay)
+            return
+          } else {
+            console.error('Stacked chart container still has no dimensions after max retries')
+            return
+          }
+        }
+      }
+
+      // Initialize or update chart
+      if (!chartInstance.current) {
+        chartInstance.current = echarts.init(chartRef.current)
+      }
+
+      // Filter for quarterly data if requested
+      const chartData = filterQuarterly
+        ? data.filter(item => {
+            const date = new Date(item.date)
+            const month = date.getMonth() + 1
+            return month === 3 || month === 6 || month === 9 || month === 12
+          })
+        : data
+
+      // Prepare data for ECharts
+      const dates = chartData.map(item => {
+        if (dateFormatter) {
+          return dateFormatter(item.date)
+        }
+        const date = new Date(item.date)
+        if (filterQuarterly) {
+          return `Q${Math.floor((date.getMonth() + 3) / 3)} ${date.getFullYear()}`
+        }
+        return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+      })
+
+      const option: echarts.EChartsOption = {
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'shadow',
+          },
+          formatter: (params: any) => {
+            const dataIndex = params[0].dataIndex
+            const originalDate = chartData[dataIndex].date
+            const date = new Date(originalDate)
+            const displayDate = dateFormatter
+              ? dateFormatter(originalDate)
+              : (filterQuarterly
+                ? `Q${Math.floor((date.getMonth() + 3) / 3)} ${date.getFullYear()}`
+                : date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }))
+
+            let tooltip = `<div style="font-weight: bold;">${displayDate}</div>`
+
+            // Get previous data for comparison
+            const currentIndex = params[0].dataIndex
+            const previousData = currentIndex > 0 ? chartData[currentIndex - 1] : null
           
           let total = 0
           
@@ -137,24 +181,31 @@ export function BaseStackedChart({
           show: false,
         },
       },
-      series: series.map(seriesConfig => ({
-        name: seriesConfig.name,
-        type: 'bar',
-        stack: 'total',
-        barWidth: 'auto',
-        barGap: '0%',
-        barCategoryGap: '0%',
-        emphasis: {
-          focus: 'series',
-        },
-        data: data.map(item => item[seriesConfig.key] || 0),
-        itemStyle: {
-          color: seriesConfig.color,
-        },
-      }))
+        series: series.map(seriesConfig => ({
+          name: seriesConfig.name,
+          type: 'bar',
+          stack: 'total',
+          barWidth: 'auto',
+          barGap: '0%',
+          barCategoryGap: '0%',
+          emphasis: {
+            focus: 'series',
+          },
+          data: chartData.map(item => item[seriesConfig.key] || 0),
+          itemStyle: {
+            color: seriesConfig.color,
+          },
+        }))
+      }
+
+      chartInstance.current.setOption(option)
     }
 
-    chartInstance.current.setOption(option)
+    // Start initialization with delay if retry is enabled
+    const timer = showRetry ? setTimeout(initializeChart, 100) : null
+    if (!showRetry) {
+      initializeChart()
+    }
 
     // Handle resize
     const handleResize = () => {
@@ -164,9 +215,10 @@ export function BaseStackedChart({
     window.addEventListener('resize', handleResize)
 
     return () => {
+      if (timer) clearTimeout(timer)
       window.removeEventListener('resize', handleResize)
     }
-  }, [data, series, dateFormatter, valueFormatter])
+  }, [data, series, dateFormatter, valueFormatter, filterQuarterly, showRetry])
 
   // Cleanup on unmount
   useEffect(() => {
@@ -178,17 +230,25 @@ export function BaseStackedChart({
     }
   }, [])
 
+  // Calculate chart height
+  const isFullHeight = height === '100%'
+  const cardClass = isFullHeight ? 'h-full' : `h-[${height}]`
+  const contentStyle = isFullHeight
+    ? { height: 'calc(100% - 70px)' }
+    : undefined
+  const chartHeight = isFullHeight ? '100%' : '250px'
+
   return (
-    <Card className="h-[320px]">
+    <Card className={cardClass}>
       <CardHeader>
         <CardTitle className="text-base font-semibold">
           {title}
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex-1 p-4">
-        <div 
-          ref={chartRef} 
-          style={{ width: '100%', height: '250px' }}
+      <CardContent className="flex-1 p-4" style={contentStyle}>
+        <div
+          ref={chartRef}
+          style={{ width: '100%', height: chartHeight }}
         />
       </CardContent>
     </Card>
