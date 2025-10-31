@@ -1,0 +1,227 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Kinesis Firehose delivery stream for Stripe webhooks with S3 storage'
+
+Parameters:
+  BucketName:
+    Type: String
+    Description: Name for the S3 bucket to store webhooks
+    Default: stripe-webhooks-bucket
+    AllowedPattern: '^[a-z0-9][a-z0-9-]*[a-z0-9]$'
+    ConstraintDescription: Bucket name must be lowercase, start/end with alphanumeric, and contain only alphanumerics and hyphens
+
+  DeliveryStreamName:
+    Type: String
+    Description: Name for the Kinesis Firehose delivery stream
+    Default: stripe-webhooks
+    AllowedPattern: '^[a-zA-Z0-9_.-]+$'
+
+  BufferSizeMB:
+    Type: Number
+    Description: Buffer size in MB (1-128)
+    Default: 5
+    MinValue: 1
+    MaxValue: 128
+
+  BufferIntervalSeconds:
+    Type: Number
+    Description: Buffer interval in seconds (60-900)
+    Default: 300
+    MinValue: 60
+    MaxValue: 900
+
+Resources:
+  # S3 Bucket for webhook storage
+  WebhookBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref BucketName
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      LifecycleConfiguration:
+        Rules:
+          # Move to Glacier after 90 days
+          - Id: ArchiveOldWebhooks
+            Status: Enabled
+            Transitions:
+              - TransitionInDays: 90
+                StorageClass: GLACIER
+          # Delete after 7 years (optional - adjust as needed)
+          - Id: DeleteOldWebhooks
+            Status: Enabled
+            ExpirationInDays: 2555
+      Tags:
+        - Key: Purpose
+          Value: StripeWebhookStorage
+        - Key: ManagedBy
+          Value: CloudFormation
+
+  # CloudWatch Log Group for Firehose errors
+  FirehoseLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/kinesisfirehose/${DeliveryStreamName}'
+      RetentionInDays: 30
+
+  # CloudWatch Log Stream for S3 delivery
+  FirehoseLogStream:
+    Type: AWS::Logs::LogStream
+    Properties:
+      LogGroupName: !Ref FirehoseLogGroup
+      LogStreamName: S3Delivery
+
+  # IAM Role for Firehose
+  FirehoseRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: firehose.amazonaws.com
+            Action: sts:AssumeRole
+            Condition:
+              StringEquals:
+                sts:ExternalId: !Ref AWS::AccountId
+      Policies:
+        - PolicyName: FirehoseS3Access
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              # S3 permissions
+              - Effect: Allow
+                Action:
+                  - s3:AbortMultipartUpload
+                  - s3:GetBucketLocation
+                  - s3:GetObject
+                  - s3:ListBucket
+                  - s3:ListBucketMultipartUploads
+                  - s3:PutObject
+                Resource:
+                  - !GetAtt WebhookBucket.Arn
+                  - !Sub '${WebhookBucket.Arn}/*'
+              # CloudWatch Logs permissions
+              - Effect: Allow
+                Action:
+                  - logs:PutLogEvents
+                  - logs:CreateLogStream
+                Resource:
+                  - !GetAtt FirehoseLogGroup.Arn
+
+  # Kinesis Firehose Delivery Stream
+  WebhookDeliveryStream:
+    Type: AWS::KinesisFirehose::DeliveryStream
+    DependsOn:
+      - FirehoseLogStream
+    Properties:
+      DeliveryStreamName: !Ref DeliveryStreamName
+      DeliveryStreamType: DirectPut
+      S3DestinationConfiguration:
+        BucketARN: !GetAtt WebhookBucket.Arn
+        RoleARN: !GetAtt FirehoseRole.Arn
+        # Partitioned prefix for efficient querying
+        Prefix: 'webhooks/year=!{timestamp:yyyy}/month=!{timestamp:MM}/day=!{timestamp:dd}/'
+        ErrorOutputPrefix: 'errors/!{firehose:error-output-type}/year=!{timestamp:yyyy}/month=!{timestamp:MM}/day=!{timestamp:dd}/'
+        BufferingHints:
+          SizeInMBs: !Ref BufferSizeMB
+          IntervalInSeconds: !Ref BufferIntervalSeconds
+        CompressionFormat: GZIP
+        CloudWatchLoggingOptions:
+          Enabled: true
+          LogGroupName: !Ref FirehoseLogGroup
+          LogStreamName: !Ref FirehoseLogStream
+
+  # IAM Policy for Application (to write to Firehose)
+  ApplicationFirehosePolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Sub '${DeliveryStreamName}-write-access'
+      Description: 'Allows application to write records to Stripe webhooks Firehose stream'
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - firehose:PutRecord
+              - firehose:PutRecordBatch
+            Resource: !GetAtt WebhookDeliveryStream.Arn
+
+  # CloudWatch Alarm for Data Freshness
+  DataFreshnessAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub '${DeliveryStreamName}-data-freshness'
+      AlarmDescription: 'Alert if webhook data is not being delivered to S3'
+      MetricName: DeliveryToS3.DataFreshness
+      Namespace: AWS/Firehose
+      Statistic: Maximum
+      Period: 300
+      EvaluationPeriods: 2
+      Threshold: 600
+      ComparisonOperator: GreaterThanThreshold
+      Dimensions:
+        - Name: DeliveryStreamName
+          Value: !Ref DeliveryStreamName
+      TreatMissingData: notBreaching
+
+  # CloudWatch Alarm for Delivery Failures
+  DeliveryFailureAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub '${DeliveryStreamName}-delivery-failures'
+      AlarmDescription: 'Alert if Firehose fails to deliver to S3'
+      MetricName: DeliveryToS3.Success
+      Namespace: AWS/Firehose
+      Statistic: Average
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 0.95
+      ComparisonOperator: LessThanThreshold
+      Dimensions:
+        - Name: DeliveryStreamName
+          Value: !Ref DeliveryStreamName
+      TreatMissingData: notBreaching
+
+Outputs:
+  BucketName:
+    Description: S3 bucket name for webhook storage
+    Value: !Ref WebhookBucket
+    Export:
+      Name: !Sub '${AWS::StackName}-BucketName'
+
+  BucketArn:
+    Description: S3 bucket ARN
+    Value: !GetAtt WebhookBucket.Arn
+    Export:
+      Name: !Sub '${AWS::StackName}-BucketArn'
+
+  DeliveryStreamName:
+    Description: Kinesis Firehose delivery stream name
+    Value: !Ref WebhookDeliveryStream
+    Export:
+      Name: !Sub '${AWS::StackName}-DeliveryStreamName'
+
+  DeliveryStreamArn:
+    Description: Kinesis Firehose delivery stream ARN
+    Value: !GetAtt WebhookDeliveryStream.Arn
+    Export:
+      Name: !Sub '${AWS::StackName}-DeliveryStreamArn'
+
+  ApplicationPolicyArn:
+    Description: IAM policy ARN for application to write to Firehose
+    Value: !Ref ApplicationFirehosePolicy
+    Export:
+      Name: !Sub '${AWS::StackName}-ApplicationPolicyArn'
+
+  LogGroupName:
+    Description: CloudWatch log group for Firehose logs
+    Value: !Ref FirehoseLogGroup
+    Export:
+      Name: !Sub '${AWS::StackName}-LogGroupName'
