@@ -140,52 +140,52 @@ export function ArrCohortsChart({ data }: ArrCohortsChartProps) {
           name: '2020 Cohort',
           type: 'line',
           data: cohort2020Values,
-          smooth: true,
+          smooth: false,
           lineStyle: {
-            color: '#3b82f6',
+            color: '#ef4444',
             width: 2
           },
           itemStyle: {
-            color: '#3b82f6'
+            color: '#ef4444'
           },
         },
         {
           name: '2021 Cohort',
           type: 'line',
           data: cohort2021Values,
-          smooth: true,
+          smooth: false,
           lineStyle: {
-            color: '#60a5fa',
+            color: '#f97316',
             width: 2
           },
           itemStyle: {
-            color: '#60a5fa'
+            color: '#f97316'
           },
         },
         {
           name: '2022 Cohort',
           type: 'line',
           data: cohort2022Values,
-          smooth: true,
+          smooth: false,
           lineStyle: {
-            color: '#93c5fd',
+            color: '#eab308',
             width: 2
           },
           itemStyle: {
-            color: '#93c5fd'
+            color: '#eab308'
           },
         },
         {
           name: '2023 Cohort',
           type: 'line',
           data: cohort2023Values,
-          smooth: true,
+          smooth: false,
           lineStyle: {
-            color: '#2563eb',
+            color: '#22c55e',
             width: 3
           },
           itemStyle: {
-            color: '#2563eb'
+            color: '#22c55e'
           },
           areaStyle: {
             color: {
@@ -195,9 +195,9 @@ export function ArrCohortsChart({ data }: ArrCohortsChartProps) {
               x2: 0,
               y2: 1,
               colorStops: [{
-                offset: 0, color: 'rgba(37, 99, 235, 0.3)'
+                offset: 0, color: 'rgba(34, 197, 94, 0.3)'
               }, {
-                offset: 1, color: 'rgba(37, 99, 235, 0.05)'
+                offset: 1, color: 'rgba(34, 197, 94, 0.05)'
               }]
             }
           }
@@ -206,13 +206,13 @@ export function ArrCohortsChart({ data }: ArrCohortsChartProps) {
           name: '2024 Cohort',
           type: 'line',
           data: cohort2024Values,
-          smooth: true,
+          smooth: false,
           lineStyle: {
-            color: '#1d4ed8',
+            color: '#8b5cf6',
             width: 3
           },
           itemStyle: {
-            color: '#1d4ed8'
+            color: '#8b5cf6'
           },
           areaStyle: {
             color: {
@@ -222,9 +222,9 @@ export function ArrCohortsChart({ data }: ArrCohortsChartProps) {
               x2: 0,
               y2: 1,
               colorStops: [{
-                offset: 0, color: 'rgba(29, 78, 216, 0.3)'
+                offset: 0, color: 'rgba(139, 92, 246, 0.3)'
               }, {
-                offset: 1, color: 'rgba(29, 78, 216, 0.05)'
+                offset: 1, color: 'rgba(139, 92, 246, 0.05)'
               }]
             }
           }

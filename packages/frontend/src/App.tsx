@@ -21,88 +21,109 @@ const App = () => {
   return (
     <MainLayout>
       <div className="space-y-6">
-        <Tabs defaultValue="overview" className="space-y-4">
+        <Tabs defaultValue="home" className="space-y-4">
           <TabsList>
             <div className="text-lg font-semibold text-gray-900 mr-6">Dashboards</div>
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="analytics">Analytics</TabsTrigger>
-            <TabsTrigger value="reports">Reports</TabsTrigger>
-            <TabsTrigger value="real-time">Real-time</TabsTrigger>
+            <TabsTrigger value="home">Home</TabsTrigger>
+            <TabsTrigger value="sales">Sales</TabsTrigger>
+            <TabsTrigger value="marketing">Marketing</TabsTrigger>
+            <TabsTrigger value="customer-success">Customer Success</TabsTrigger>
+            <TabsTrigger value="finance">Finance</TabsTrigger>
           </TabsList>
           
-          <TabsContent value="overview" className="space-y-4">
+          <TabsContent value="home" className="space-y-4">
             <div className="space-y-4 px-6">
               <DashboardHeader />
               
-              <div className="grid gap-6 lg:grid-cols-2">
-                <TopWinsCard />
-                <MrrBreakdownCard />
-              </div>
+              <div className="border p-2 rounded-xl bg-muted/30">
+                <div className="space-y-2">
+                  <div className="grid gap-2 lg:grid-cols-2">
+                    <TopWinsCard />
+                    <MrrBreakdownCard />
+                  </div>
 
-              <div className="grid gap-6 lg:grid-cols-2">
-                <MrrMovementsChart data={mrrData.entries} />
-                <ArrChart data={arrDataNew.entries} />
-              </div>
+                  <div className="grid gap-2 lg:grid-cols-2">
+                    <MrrMovementsChart data={mrrData.entries} />
+                    <ArrChart data={arrDataNew.entries} />
+                  </div>
 
-              <div className="grid gap-6 lg:grid-cols-2">
-                <MrrCard data={mrrGrowthData.entries} />
-                <SubscribersChart data={subscribersData.entries} />
-              </div>
+                  <div className="grid gap-2 lg:grid-cols-2">
+                    <MrrCard data={mrrGrowthData.entries} />
+                    <SubscribersChart data={subscribersData.entries} />
+                  </div>
 
-              <div className="grid gap-6 lg:grid-cols-2">
-                <ArpaChart data={arpaData.entries} />
-                <ArrCohortsChart data={arrCohortsData} />
-              </div>
+                  <div className="grid gap-2 lg:grid-cols-2">
+                    <ArpaChart data={arpaData.entries} />
+                    <ArrCohortsChart data={arrCohortsData} />
+                  </div>
 
-              <div className="grid gap-6 lg:grid-cols-1">
-                <NewBizReactivationChart data={newBizReactivationData.entries} />
+                  <div className="grid gap-2 lg:grid-cols-1">
+                    <NewBizReactivationChart data={newBizReactivationData.entries} />
+                  </div>
+                </div>
               </div>
             </div>
           </TabsContent>
           
-          <TabsContent value="analytics" className="space-y-4">
+          <TabsContent value="sales" className="space-y-4">
             <div className="px-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Analytics Dashboard</CardTitle>
+                  <CardTitle>Sales Dashboard</CardTitle>
                   <CardDescription>
-                    Detailed analytics and insights
+                    Sales performance and metrics
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground">Analytics content coming soon...</p>
+                  <p className="text-muted-foreground">Sales content coming soon...</p>
                 </CardContent>
               </Card>
             </div>
           </TabsContent>
           
-          <TabsContent value="reports" className="space-y-4">
+          <TabsContent value="marketing" className="space-y-4">
             <div className="px-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Reports</CardTitle>
+                  <CardTitle>Marketing Dashboard</CardTitle>
                   <CardDescription>
-                    Generate and view reports
+                    Marketing campaigns and performance
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground">Reports content coming soon...</p>
+                  <p className="text-muted-foreground">Marketing content coming soon...</p>
                 </CardContent>
               </Card>
             </div>
           </TabsContent>
           
-          <TabsContent value="real-time" className="space-y-4">
+          <TabsContent value="customer-success" className="space-y-4">
             <div className="px-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Real-time Data</CardTitle>
+                  <CardTitle>Customer Success Dashboard</CardTitle>
                   <CardDescription>
-                    Live data streaming and monitoring
+                    Customer satisfaction and retention metrics
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground">Real-time monitoring coming soon...</p>
+                  <p className="text-muted-foreground">Customer Success content coming soon...</p>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="finance" className="space-y-4">
+            <div className="px-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Finance Dashboard</CardTitle>
+                  <CardDescription>
+                    Financial metrics and reporting
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">Finance content coming soon...</p>
                 </CardContent>
               </Card>
             </div>
