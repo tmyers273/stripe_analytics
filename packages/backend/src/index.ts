@@ -2,6 +2,7 @@ import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { logger } from 'hono/logger'
 import { counterRoutes } from './routes/counter'
+import { webhookRoutes } from './routes/stripe-webhook'
 
 const app = new Hono()
 
@@ -15,6 +16,7 @@ app.use('*', cors({
 
 // Routes
 app.route('/api/counter', counterRoutes)
+app.route('/webhook/stripe', webhookRoutes)
 
 // Health check
 app.get('/health', (c) => {
@@ -28,7 +30,8 @@ app.get('/', (c) => {
     version: '1.0.0',
     endpoints: {
       health: '/health',
-      counter: '/api/counter'
+      counter: '/api/counter',
+      stripeWebhook: '/webhook/stripe'
     }
   })
 })
