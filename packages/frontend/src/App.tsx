@@ -13,15 +13,9 @@ const App = () => {
   return (
     <MainLayout>
       <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Dashboards</h1>
-          <p className="text-muted-foreground">
-            Welcome to your Stripe Analytics dashboard
-          </p>
-        </div>
-        
         <Tabs defaultValue="overview" className="space-y-4">
           <TabsList>
+            <div className="text-lg font-semibold text-gray-900 mr-6">Dashboards</div>
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
             <TabsTrigger value="reports">Reports</TabsTrigger>
@@ -29,7 +23,7 @@ const App = () => {
           </TabsList>
           
           <TabsContent value="overview" className="space-y-4">
-            <div className="space-y-4">
+            <div className="space-y-4 px-6">
               <DashboardHeader />
               
               <div className="grid gap-6 lg:grid-cols-2">
@@ -49,45 +43,51 @@ const App = () => {
           </TabsContent>
           
           <TabsContent value="analytics" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Analytics Dashboard</CardTitle>
-                <CardDescription>
-                  Detailed analytics and insights
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">Analytics content coming soon...</p>
-              </CardContent>
-            </Card>
+            <div className="px-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Analytics Dashboard</CardTitle>
+                  <CardDescription>
+                    Detailed analytics and insights
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">Analytics content coming soon...</p>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
           
           <TabsContent value="reports" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Reports</CardTitle>
-                <CardDescription>
-                  Generate and view reports
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">Reports content coming soon...</p>
-              </CardContent>
-            </Card>
+            <div className="px-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Reports</CardTitle>
+                  <CardDescription>
+                    Generate and view reports
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">Reports content coming soon...</p>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
           
           <TabsContent value="real-time" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Real-time Data</CardTitle>
-                <CardDescription>
-                  Live data streaming and monitoring
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">Real-time monitoring coming soon...</p>
-              </CardContent>
-            </Card>
+            <div className="px-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Real-time Data</CardTitle>
+                  <CardDescription>
+                    Live data streaming and monitoring
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">Real-time monitoring coming soon...</p>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
         </Tabs>
       </div>

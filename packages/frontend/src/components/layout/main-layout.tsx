@@ -12,7 +12,7 @@ export function MainLayout({ children }: MainLayoutProps) {
         <Sidebar />
       </div>
       <div className="flex-1 bg-muted/30 overflow-hidden">
-        <main className="rounded-lg border bg-card h-full my-1.5 mr-1.5 ml-0 p-6 overflow-auto">
+        <main className="rounded-lg border bg-card h-full my-1.5 mr-1.5 ml-0 overflow-auto">
           {children}
         </main>
       </div>
