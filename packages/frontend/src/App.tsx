@@ -16,6 +16,11 @@ import { ArpaChart } from './components/dashboard/ArpaChart'
 import { arpaData } from './data/arpaData'
 import { ArrCohortsChart } from './components/dashboard/ArrCohortsChart'
 import { arrCohortsData } from './data/arrCohortsData'
+import { LeadsChart } from './components/dashboard/LeadsChart'
+import { leadsData } from './data/leadsData'
+import { FreeTrialsChart } from './components/dashboard/FreeTrialsChart'
+import { freeTrialsData } from './data/freeTrialsData'
+import { MarketingHeader } from './components/dashboard/MarketingHeader'
 
 const App = () => {
   return (
@@ -25,7 +30,6 @@ const App = () => {
           <TabsList>
             <div className="text-lg font-semibold text-gray-900 mr-6">Dashboards</div>
             <TabsTrigger value="home">Home</TabsTrigger>
-            <TabsTrigger value="sales">Sales</TabsTrigger>
             <TabsTrigger value="marketing">Marketing</TabsTrigger>
             <TabsTrigger value="customer-success">Customer Success</TabsTrigger>
             <TabsTrigger value="finance">Finance</TabsTrigger>
@@ -65,35 +69,17 @@ const App = () => {
             </div>
           </TabsContent>
           
-          <TabsContent value="sales" className="space-y-4">
-            <div className="px-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Sales Dashboard</CardTitle>
-                  <CardDescription>
-                    Sales performance and metrics
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">Sales content coming soon...</p>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-          
           <TabsContent value="marketing" className="space-y-4">
-            <div className="px-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Marketing Dashboard</CardTitle>
-                  <CardDescription>
-                    Marketing campaigns and performance
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">Marketing content coming soon...</p>
-                </CardContent>
-              </Card>
+            <div className="space-y-4 px-6">
+              <MarketingHeader />
+              <div className="border p-2 rounded-xl bg-muted/30">
+                <div className="space-y-2">
+                  <div className="grid gap-2 lg:grid-cols-2">
+                    <LeadsChart data={leadsData.entries} summary={leadsData.summary} />
+                    <FreeTrialsChart data={freeTrialsData.entries} />
+                  </div>
+                </div>
+              </div>
             </div>
           </TabsContent>
           
