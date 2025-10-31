@@ -225,7 +225,7 @@ export type DashboardWidgetKind =
   | 'chart'
   | 'custom_chart'
 
-export type DashboardMetric = 
+export type DashboardMetric =
   | 'customer_activity'
   | 'customer_list'
   | 'mrr_movements'
@@ -233,6 +233,10 @@ export type DashboardMetric =
   | 'mrr_growth'
   | 'customer_growth'
   | 'arpa'
+  | 'leads'
+  | 'free_trials'
+  | 'mrr_churn_rate'
+  | 'customer_churn_rate'
 
 export interface DashboardWidget {
   grid: GridPosition
@@ -245,6 +249,82 @@ export interface DashboardWidget {
 
 export interface DashboardConfig {
   widgets: DashboardWidget[]
+}
+
+// Customer Success dashboard configuration
+export const customerSuccessDashboardConfig: DashboardConfig = {
+  widgets: [
+    {
+      grid: {
+        x: 0,
+        y: 0,
+        width: 1,
+        height: 3
+      },
+      kind: "chart",
+      metric: "mrr_churn_rate",
+      url: "/reports/charts/mrr-churn?type=line&interval=month&start=24.month.ago",
+      chart: {
+        shape: "line",
+        interval: "month",
+        interval_count: 24
+      }
+    },
+    {
+      grid: {
+        x: 1,
+        y: 0,
+        width: 1,
+        height: 3
+      },
+      kind: "chart",
+      metric: "customer_churn_rate",
+      url: "/reports/charts/customer-churn?type=line&interval=month&start=24.month.ago",
+      chart: {
+        shape: "line",
+        interval: "month",
+        interval_count: 24
+      }
+    }
+  ]
+}
+
+// Marketing dashboard configuration
+export const marketingDashboardConfig: DashboardConfig = {
+  widgets: [
+    {
+      grid: {
+        x: 0,
+        y: 0,
+        width: 1,
+        height: 3
+      },
+      kind: "chart",
+      metric: "leads",
+      url: "/reports/charts/leads?type=area&interval=week&start=12.week.ago",
+      chart: {
+        shape: "area",
+        interval: "week",
+        interval_count: 12
+      }
+    },
+    {
+      grid: {
+        x: 1,
+        y: 0,
+        width: 1,
+        height: 3
+      },
+      kind: "chart",
+      metric: "free_trials",
+      url: "/reports/charts/free-trials?type=area&interval=week&start=12.week.ago",
+      chart: {
+        shape: "area",
+        interval: "week",
+        interval_count: 12
+      }
+    }
+  ]
 }
 
 // Home dashboard configuration
@@ -275,19 +355,14 @@ export const homeDashboardConfig: DashboardConfig = {
       metric: "customer_list"
     },
     {
-      url: "/reports/charts/mrr-movements?type=bar&interval=month&start=24.month.ago",
+      url: "/reports/charts/lKQeK",
       grid: {
         x: 0,
         y: 3,
         width: 1,
         height: 3
       },
-      kind: "chart",
-      chart: {
-        shape: "bar",
-        interval: "month",
-        interval_count: 24
-      },
+      kind: "custom_chart",
       metric: "mrr_movements"
     },
     {
@@ -318,14 +393,19 @@ export const homeDashboardConfig: DashboardConfig = {
       metric: "mrr_growth"
     },
     {
-      url: "/reports/charts/lKQeK",
+      url: "/reports/charts/mrr-movements?type=bar&interval=month&start=24.month.ago",
       grid: {
         x: 0,
         y: 6,
         width: 1,
         height: 3
       },
-      kind: "custom_chart",
+      kind: "chart",
+      chart: {
+        shape: "bar",
+        interval: "month",
+        interval_count: 24
+      },
       metric: "mrr_movements"
     },
     {

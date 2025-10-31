@@ -3,12 +3,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from './components/ui/tabs'
 import { MainLayout } from './components/layout/main-layout'
 import { DashboardHeader } from './components/dashboard/DashboardHeader'
 import { DynamicDashboard } from './components/dashboard/DynamicDashboard'
-import { homeDashboardConfig } from './types/dashboardData'
-import { LeadsChart } from './components/dashboard/LeadsChart'
-import { leadsData } from './data/leadsData'
-import { FreeTrialsChart } from './components/dashboard/FreeTrialsChart'
-import { freeTrialsData } from './data/freeTrialsData'
+import { homeDashboardConfig, marketingDashboardConfig, customerSuccessDashboardConfig } from './types/dashboardData'
 import { MarketingHeader } from './components/dashboard/MarketingHeader'
+import { CustomerSuccessHeader } from './components/dashboard/CustomerSuccessHeader'
 
 const App = () => {
   return (
@@ -36,30 +33,18 @@ const App = () => {
           <TabsContent value="marketing" className="space-y-4">
             <div className="space-y-4 px-6">
               <MarketingHeader />
-              <div className="border p-2 rounded-xl bg-muted/30">
-                <div className="space-y-2">
-                  <div className="grid gap-2 lg:grid-cols-2">
-                    <LeadsChart data={leadsData.entries} summary={leadsData.summary} />
-                    <FreeTrialsChart data={freeTrialsData.entries} />
-                  </div>
-                </div>
+              <div className="border p-2 rounded-xl bg-muted/30 relative">
+                <DynamicDashboard config={marketingDashboardConfig} />
               </div>
             </div>
           </TabsContent>
           
           <TabsContent value="customer-success" className="space-y-4">
-            <div className="px-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Customer Success Dashboard</CardTitle>
-                  <CardDescription>
-                    Customer satisfaction and retention metrics
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">Customer Success content coming soon...</p>
-                </CardContent>
-              </Card>
+            <div className="space-y-4 px-6">
+              <CustomerSuccessHeader />
+              <div className="border p-2 rounded-xl bg-muted/30 relative">
+                <DynamicDashboard config={customerSuccessDashboardConfig} />
+              </div>
             </div>
           </TabsContent>
           
