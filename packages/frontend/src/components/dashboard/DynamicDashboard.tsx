@@ -15,6 +15,14 @@ import { newBizReactivationData } from '../../data/newBizReactivationData'
 import { subscribersData } from '../../data/subscribersData'
 import { arpaData } from '../../data/arpaData'
 import { arrCohortsData } from '../../data/arrCohortsData'
+import { leadsData } from '../../data/leadsData'
+import { freeTrialsData } from '../../data/freeTrialsData'
+import { LeadsChart } from './LeadsChart'
+import { FreeTrialsChart } from './FreeTrialsChart'
+import { mrrChurnData } from '../../data/mrrChurnData'
+import { customerChurnData } from '../../data/customerChurnData'
+import { MrrChurnChart } from './MrrChurnChart'
+import { CustomerChurnChart } from './CustomerChurnChart'
 
 interface DynamicDashboardProps {
   config: DashboardConfig
@@ -49,7 +57,19 @@ const WidgetRenderer: React.FC<{ widget: DashboardWidget }> = ({ widget }) => {
       
       case 'arpa':
         return <ArpaChartRefactored data={arpaData.entries} />
-      
+
+      case 'leads':
+        return <LeadsChart data={leadsData.entries} summary={leadsData.summary} />
+
+      case 'free_trials':
+        return <FreeTrialsChart data={freeTrialsData.entries} />
+
+      case 'mrr_churn_rate':
+        return <MrrChurnChart data={mrrChurnData.entries} />
+
+      case 'customer_churn_rate':
+        return <CustomerChurnChart data={customerChurnData.entries} />
+
       default:
         return (
           <Card>
