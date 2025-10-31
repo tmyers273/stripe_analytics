@@ -150,7 +150,7 @@ export function ArrChart({ data }: ArrChartProps) {
   }, [])
 
   return (
-    <Card className="h-[320px]">
+    <Card className="h-full">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-base font-semibold">
           Annual Run Rate (ARR)
@@ -166,10 +166,10 @@ export function ArrChart({ data }: ArrChartProps) {
           </p>
         </div>
       </CardHeader>
-      <CardContent className="flex-1 p-4 pt-2">
+      <CardContent className="p-4 pt-2" style={{ height: 'calc(100% - 70px)' }}>
         <div 
           ref={chartRef} 
-          style={{ width: '100%', height: '240px' }}
+          style={{ width: '100%', height: '100%' }}
         />
       </CardContent>
     </Card>

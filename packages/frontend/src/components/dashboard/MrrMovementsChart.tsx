@@ -3,7 +3,7 @@ import * as echarts from 'echarts'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { MrrMovementsChartProps } from '../../types/dashboardData'
 
-export function MrrMovementsChart({ data }: MrrMovementsChartProps) {
+export function MrrMovementsChart({ data, height = 320 }: MrrMovementsChartProps & { height?: number }) {
   const chartRef = useRef<HTMLDivElement>(null)
   const chartInstance = useRef<echarts.ECharts | null>(null)
 
@@ -268,7 +268,7 @@ export function MrrMovementsChart({ data }: MrrMovementsChartProps) {
   }, [])
 
   return (
-    <Card className="h-[320px]">
+    <Card style={{ height: `${height}px` }}>
       <CardHeader>
         <CardTitle className="text-base font-semibold">
           MRR Movements - Stacked Bar Chart
@@ -277,7 +277,7 @@ export function MrrMovementsChart({ data }: MrrMovementsChartProps) {
       <CardContent className="flex-1 p-4 pt-2">
         <div 
           ref={chartRef} 
-          style={{ width: '100%', height: '240px' }}
+          style={{ width: '100%', height: `${height - 80}px` }}
         />
       </CardContent>
     </Card>

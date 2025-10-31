@@ -2,20 +2,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './components/ui/tabs'
 import { MainLayout } from './components/layout/main-layout'
 import { DashboardHeader } from './components/dashboard/DashboardHeader'
-import { TopWinsCard } from './components/dashboard/TopWinsCard'
-import { MrrBreakdownCard } from './components/dashboard/MrrBreakdownCard'
-import { MrrMovementsChart } from './components/dashboard/MrrMovementsChart'
-import { ArrChart } from './components/dashboard/ArrChart'
-import { MrrCard } from './components/dashboard/MrrCard'
-import { mrrData, arrDataNew, mrrGrowthData } from './data/mrrData'
-import { NewBizReactivationChart } from './components/dashboard/NewBizReactivationChart'
-import { newBizReactivationData } from './data/newBizReactivationData'
-import { SubscribersChart } from './components/dashboard/SubscribersChart'
-import { subscribersData } from './data/subscribersData'
-import { ArpaChart } from './components/dashboard/ArpaChart'
-import { arpaData } from './data/arpaData'
-import { ArrCohortsChart } from './components/dashboard/ArrCohortsChart'
-import { arrCohortsData } from './data/arrCohortsData'
+import { DynamicDashboard } from './components/dashboard/DynamicDashboard'
+import { homeDashboardConfig } from './types/dashboardData'
 import { LeadsChart } from './components/dashboard/LeadsChart'
 import { leadsData } from './data/leadsData'
 import { FreeTrialsChart } from './components/dashboard/FreeTrialsChart'
@@ -39,32 +27,8 @@ const App = () => {
             <div className="space-y-4 px-6">
               <DashboardHeader />
               
-              <div className="border p-2 rounded-xl bg-muted/30">
-                <div className="space-y-2">
-                  <div className="grid gap-2 lg:grid-cols-2">
-                    <TopWinsCard />
-                    <MrrBreakdownCard />
-                  </div>
-
-                  <div className="grid gap-2 lg:grid-cols-2">
-                    <MrrMovementsChart data={mrrData.entries} />
-                    <ArrChart data={arrDataNew.entries} />
-                  </div>
-
-                  <div className="grid gap-2 lg:grid-cols-2">
-                    <MrrCard data={mrrGrowthData.entries} />
-                    <SubscribersChart data={subscribersData.entries} />
-                  </div>
-
-                  <div className="grid gap-2 lg:grid-cols-2">
-                    <ArpaChart data={arpaData.entries} />
-                    <ArrCohortsChart data={arrCohortsData} />
-                  </div>
-
-                  <div className="grid gap-2 lg:grid-cols-1">
-                    <NewBizReactivationChart data={newBizReactivationData.entries} />
-                  </div>
-                </div>
+              <div className="border p-2 rounded-xl bg-muted/30 relative">
+                <DynamicDashboard config={homeDashboardConfig} />
               </div>
             </div>
           </TabsContent>

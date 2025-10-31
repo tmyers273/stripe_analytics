@@ -3,7 +3,7 @@ import * as echarts from 'echarts'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ArpaChartProps } from '../../types/dashboardData'
 
-export function ArpaChart({ data }: ArpaChartProps) {
+export function ArpaChart({ data, height }: ArpaChartProps & { height?: number }) {
   const chartRef = useRef<HTMLDivElement>(null)
   const chartInstance = useRef<echarts.ECharts | null>(null)
 
@@ -145,7 +145,7 @@ export function ArpaChart({ data }: ArpaChartProps) {
   }, [])
 
   return (
-    <Card className="h-[320px]">
+    <Card style={{ height: `${height}px` }}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-base font-semibold">
           Average Revenue per Account (ARPA)

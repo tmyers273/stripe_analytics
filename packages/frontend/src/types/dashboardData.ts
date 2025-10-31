@@ -200,3 +200,176 @@ export interface HomeDashboardData {
   topWins: TopWinsEntry[]
   mrrBreakdown: MrrBreakdownEntry[]
 }
+
+// Dashboard configuration types
+export interface GridPosition {
+  x: number
+  y: number
+  width: number
+  height: number
+}
+
+export interface ChartConfig {
+  shape: 'bar' | 'line' | 'area' | 'pie'
+  interval: 'day' | 'week' | 'month' | 'quarter' | 'year'
+  interval_count: number
+}
+
+export interface CustomerListConfig {
+  column_count: number
+}
+
+export type DashboardWidgetKind = 
+  | 'mrr_breakdown'
+  | 'customer_list'
+  | 'chart'
+  | 'custom_chart'
+
+export type DashboardMetric = 
+  | 'customer_activity'
+  | 'customer_list'
+  | 'mrr_movements'
+  | 'arr_growth'
+  | 'mrr_growth'
+  | 'customer_growth'
+  | 'arpa'
+
+export interface DashboardWidget {
+  grid: GridPosition
+  kind: DashboardWidgetKind
+  metric: DashboardMetric
+  url?: string
+  config?: CustomerListConfig
+  chart?: ChartConfig
+}
+
+export interface DashboardConfig {
+  widgets: DashboardWidget[]
+}
+
+// Home dashboard configuration
+export const homeDashboardConfig: DashboardConfig = {
+  widgets: [
+    {
+      grid: {
+        x: 0,
+        y: 0,
+        width: 1,
+        height: 3
+      },
+      kind: "mrr_breakdown",
+      metric: "customer_activity"
+    },
+    {
+      url: "/customers/lists/RV5Jp/page/1",
+      grid: {
+        x: 1,
+        y: 0,
+        width: 1,
+        height: 3
+      },
+      kind: "customer_list",
+      config: {
+        column_count: 4
+      },
+      metric: "customer_list"
+    },
+    {
+      url: "/reports/charts/mrr-movements?type=bar&interval=month&start=24.month.ago",
+      grid: {
+        x: 0,
+        y: 3,
+        width: 1,
+        height: 3
+      },
+      kind: "chart",
+      chart: {
+        shape: "bar",
+        interval: "month",
+        interval_count: 24
+      },
+      metric: "mrr_movements"
+    },
+    {
+      url: "/reports/charts/arr?type=line&interval=month&start=24.month.ago",
+      grid: {
+        x: 1,
+        y: 3,
+        width: 1,
+        height: 2
+      },
+      kind: "chart",
+      chart: {
+        shape: "line",
+        interval: "month",
+        interval_count: 24
+      },
+      metric: "arr_growth"
+    },
+    {
+      url: "/reports/charts/mrr",
+      grid: {
+        x: 1,
+        y: 5,
+        width: 1,
+        height: 1
+      },
+      kind: "chart",
+      metric: "mrr_growth"
+    },
+    {
+      url: "/reports/charts/lKQeK",
+      grid: {
+        x: 0,
+        y: 6,
+        width: 1,
+        height: 3
+      },
+      kind: "custom_chart",
+      metric: "mrr_movements"
+    },
+    {
+      url: "/reports/charts/subscribers?type=line&interval=month&start=24.month.ago",
+      grid: {
+        x: 1,
+        y: 6,
+        width: 1,
+        height: 2
+      },
+      kind: "chart",
+      chart: {
+        shape: "line",
+        interval: "month",
+        interval_count: 24
+      },
+      metric: "customer_growth"
+    },
+    {
+      url: "/reports/charts/arpa?type=line&interval=month&start=24.month.ago",
+      grid: {
+        x: 0,
+        y: 9,
+        width: 1,
+        height: 2
+      },
+      kind: "chart",
+      chart: {
+        shape: "line",
+        interval: "month",
+        interval_count: 24
+      },
+      metric: "arpa"
+    },
+    {
+      url: "/reports/charts/dq5yD",
+      grid: {
+        x: 1,
+        y: 8,
+        width: 1,
+        height: 3
+      },
+      kind: "custom_chart",
+      metric: "arr_growth"
+    }
+  ]
+}
