@@ -2,9 +2,10 @@ import { BaseLineChart, ChartEntry } from '@/components/charts/BaseLineChart'
 
 interface SubscribersChartProps {
   data: ChartEntry[]
+  height?: number
 }
 
-export function SubscribersChartRefactored({ data }: SubscribersChartProps) {
+export function SubscribersChartRefactored({ data, height = 2 }: SubscribersChartProps) {
   const formatNumber = (value: number) => {
     return value.toLocaleString()
   }
@@ -17,6 +18,7 @@ export function SubscribersChartRefactored({ data }: SubscribersChartProps) {
       color="#3b82f6"
       showArea={true}
       seriesName="Subscribers"
+      height={height}
     />
   )
 }

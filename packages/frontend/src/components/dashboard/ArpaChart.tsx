@@ -11,13 +11,14 @@ export function ArpaChart({ data, height }: ArpaChartProps & { height?: number }
   const currentEntry = data[data.length - 1]
   const previousEntry = data.length > 1 ? data[data.length - 2] : null
   
-  const currentArpa = currentEntry ? currentEntry.value : 0
+  const currentArpa = currentEntry ? currentEntry.value / 100 : 0 // Convert cents to dollars
   const percentageChange = currentEntry && previousEntry && previousEntry.value !== 0 
     ? ((currentEntry.value - previousEntry.value) / previousEntry.value) * 100
     : 0
 
   const formatCurrency = (value: number) => {
-    return `$${value.toLocaleString()}`
+    const valueInDollars = value / 100 // Convert cents to dollars
+    return `$${valueInDollars.toLocaleString()}`
   }
 
   useEffect(() => {
@@ -53,6 +54,7 @@ export function ArpaChart({ data, height }: ArpaChartProps & { height?: number }
           let tooltip = `<div style="font-weight: bold;">${monthYear}</div>`
           
           params.forEach((param: any) => {
+            const valueInDollars = param.value / 100 // Convert cents to dollars
             const formattedValue = formatCurrency(param.value)
             
             // Add percentage change if available
@@ -145,7 +147,7 @@ export function ArpaChart({ data, height }: ArpaChartProps & { height?: number }
   }, [])
 
   return (
-    <Card style={{ height: `${height}px` }}>
+    <Card style={{ height: `${height ? height * 101.33 : 320}px` }}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-base font-semibold">
           Average Revenue per Account (ARPA)
@@ -164,7 +166,7 @@ export function ArpaChart({ data, height }: ArpaChartProps & { height?: number }
       <CardContent className="flex-1 p-4 pt-2">
         <div 
           ref={chartRef} 
-          style={{ width: '100%', height: '240px' }}
+          style={{ width: '100%', height: `${height ? height * 101.33 - 80 : 240}px` }}
         />
       </CardContent>
     </Card>

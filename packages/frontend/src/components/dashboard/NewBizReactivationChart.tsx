@@ -30,8 +30,6 @@ export function NewBizReactivationChart({ data }: NewBizReactivationChartProps) 
     const newBizMrr = quarterData.map(item => item.new_biz_mrr)
     const expansionMrr = quarterData.map(item => item.expansion_mrr)
     const reactivationMrr = quarterData.map(item => item.reactivation_mrr)
-    const contractionMrr = quarterData.map(item => item.contraction_mrr)
-    const churnMrr = quarterData.map(item => item.churn_mrr)
 
     const option: echarts.EChartsOption = {
       tooltip: {
@@ -73,12 +71,6 @@ export function NewBizReactivationChart({ data }: NewBizReactivationChartProps) 
                     break
                   case 'Reactivation':
                     previousValue = previousQuarterData.reactivation_mrr
-                    break
-                  case 'Contraction':
-                    previousValue = previousQuarterData.contraction_mrr
-                    break
-                  case 'Churn':
-                    previousValue = previousQuarterData.churn_mrr
                     break
                 }
                 
@@ -168,36 +160,6 @@ export function NewBizReactivationChart({ data }: NewBizReactivationChartProps) 
       },
       series: [
         {
-          name: 'Churn',
-          type: 'bar',
-          stack: 'total',
-          barWidth: 'auto',
-          barGap: '0%',
-          barCategoryGap: '0%',
-          emphasis: {
-            focus: 'series',
-          },
-          data: churnMrr,
-          itemStyle: {
-            color: '#ef4444', // red-500
-          },
-        },
-        {
-          name: 'Contraction',
-          type: 'bar',
-          stack: 'total',
-          barWidth: 'auto',
-          barGap: '0%',
-          barCategoryGap: '0%',
-          emphasis: {
-            focus: 'series',
-          },
-          data: contractionMrr,
-          itemStyle: {
-            color: '#dc2626', // red-600
-          },
-        },
-        {
           name: 'New Business',
           type: 'bar',
           stack: 'total',
@@ -273,7 +235,7 @@ export function NewBizReactivationChart({ data }: NewBizReactivationChartProps) 
     <Card className="h-[320px]">
       <CardHeader>
         <CardTitle className="text-base font-semibold">
-          MRR Movements - Quarterly Stacked Chart
+          New Biz + Reactivations - Quarterly Growth
         </CardTitle>
       </CardHeader>
       <CardContent className="flex-1 p-4 pt-2">

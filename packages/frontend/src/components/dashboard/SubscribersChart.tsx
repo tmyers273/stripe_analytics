@@ -145,7 +145,7 @@ export function SubscribersChart({ data, height }: SubscribersChartProps & { hei
   }, [])
 
   return (
-    <Card style={{ height: `${height}px` }}>
+    <Card style={{ height: `${height ? height * 101.33 : 320}px` }}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-base font-semibold">
           Subscribers
@@ -164,7 +164,7 @@ export function SubscribersChart({ data, height }: SubscribersChartProps & { hei
       <CardContent className="flex-1 p-4 pt-2">
         <div 
           ref={chartRef} 
-          style={{ width: '100%', height: '240px' }}
+          style={{ width: '100%', height: `${height ? height * 101.33 - 80 : 240}px` }}
         />
       </CardContent>
     </Card>

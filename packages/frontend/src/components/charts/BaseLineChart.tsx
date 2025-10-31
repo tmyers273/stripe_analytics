@@ -16,6 +16,7 @@ export interface BaseLineChartProps {
   showArea?: boolean
   showLegend?: boolean
   seriesName?: string
+  height?: number
 }
 
 export function BaseLineChart({ 
@@ -25,7 +26,8 @@ export function BaseLineChart({
   color = '#3b82f6',
   showArea = true,
   showLegend = false,
-  seriesName = 'Value'
+  seriesName = 'Value',
+  height = 3
 }: BaseLineChartProps) {
   const chartRef = useRef<HTMLDivElement>(null)
   const chartInstance = useRef<echarts.ECharts | null>(null)
@@ -157,7 +159,7 @@ export function BaseLineChart({
     return () => {
       window.removeEventListener('resize', handleResize)
     }
-  }, [data, valueFormatter, color, showArea, showLegend, seriesName])
+  }, [data, valueFormatter, color, showArea, showLegend, seriesName, height])
 
   // Cleanup on unmount
   useEffect(() => {
@@ -170,7 +172,7 @@ export function BaseLineChart({
   }, [])
 
   return (
-    <Card className="h-[320px]">
+    <Card style={{ height: `${height * 101.33}px` }}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-base font-semibold">
           {title}
@@ -189,7 +191,7 @@ export function BaseLineChart({
       <CardContent className="flex-1 p-4">
         <div 
           ref={chartRef} 
-          style={{ width: '100%', height: '250px' }}
+          style={{ width: '100%', height: `${height * 101.33 - 90}px` }}
         />
       </CardContent>
     </Card>

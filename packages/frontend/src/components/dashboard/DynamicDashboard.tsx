@@ -6,8 +6,8 @@ import { MrrBreakdownCard } from './MrrBreakdownCard'
 import { MrrMovementsChart } from './MrrMovementsChart'
 import { ArrChart } from './ArrChart'
 import { MrrCard } from './MrrCard'
-import { SubscribersChart } from './SubscribersChart'
-import { ArpaChart } from './ArpaChart'
+import { SubscribersChartRefactored } from './SubscribersChartRefactored'
+import { ArpaChartRefactored } from './ArpaChartRefactored'
 import { ArrCohortsChart } from './ArrCohortsChart'
 import { NewBizReactivationChart } from './NewBizReactivationChart'
 import { mrrData, arrDataNew, mrrGrowthData } from '../../data/mrrData'
@@ -31,33 +31,13 @@ const WidgetRenderer: React.FC<{ widget: DashboardWidget }> = ({ widget }) => {
       
       case 'mrr_movements':
         if (widget.kind === 'custom_chart') {
-          return (
-            <Card>
-              <CardHeader>
-                <CardTitle>Custom MRR Movements</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p>Custom chart widget</p>
-                <p className="text-sm text-muted-foreground">URL: {widget.url}</p>
-              </CardContent>
-            </Card>
-          )
+          return <NewBizReactivationChart data={newBizReactivationData.entries} />
         }
         return <MrrMovementsChart data={mrrData.entries} />
       
       case 'arr_growth':
         if (widget.kind === 'custom_chart') {
-          return (
-            <Card>
-              <CardHeader>
-                <CardTitle>Custom ARR Growth</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p>Custom chart widget</p>
-                <p className="text-sm text-muted-foreground">URL: {widget.url}</p>
-              </CardContent>
-            </Card>
-          )
+          return <ArrCohortsChart data={arrCohortsData} />
         }
         return <ArrChart data={arrDataNew.entries} />
       
@@ -65,10 +45,10 @@ const WidgetRenderer: React.FC<{ widget: DashboardWidget }> = ({ widget }) => {
         return <MrrCard data={mrrGrowthData.entries} />
       
       case 'customer_growth':
-        return <SubscribersChart data={subscribersData.entries} />
+        return <SubscribersChartRefactored data={subscribersData.entries} height={2} />
       
       case 'arpa':
-        return <ArpaChart data={arpaData.entries} />
+        return <ArpaChartRefactored data={arpaData.entries} height={2} />
       
       default:
         return (

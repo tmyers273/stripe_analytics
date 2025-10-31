@@ -2,11 +2,13 @@ import { BaseLineChart, ChartEntry } from '@/components/charts/BaseLineChart'
 
 interface ArpaChartProps {
   data: ChartEntry[]
+  height?: number
 }
 
-export function ArpaChartRefactored({ data }: ArpaChartProps) {
+export function ArpaChartRefactored({ data, height = 2 }: ArpaChartProps) {
   const formatCurrency = (value: number) => {
-    return `$${value.toLocaleString()}`
+    const valueInDollars = value / 100 // Convert cents to dollars
+    return `$${valueInDollars.toLocaleString()}`
   }
 
   return (
@@ -17,6 +19,7 @@ export function ArpaChartRefactored({ data }: ArpaChartProps) {
       color="#3b82f6"
       showArea={true}
       seriesName="ARPA"
+      height={height}
     />
   )
 }
