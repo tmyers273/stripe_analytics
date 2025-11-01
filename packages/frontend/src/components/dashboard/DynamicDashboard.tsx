@@ -112,8 +112,9 @@ export const DynamicDashboard: React.FC<DynamicDashboardProps> = observer(({ con
     }))
   }, [config.widgets])
 
-  const handleLayoutChange = useCallback((newLayout: Layout[]) => {
-    if (!dashboardStore.isEditMode || !dashboardStore.activeDashboard) return
+  // Save layout to backend - only called when drag/resize completes
+  const saveLayout = useCallback((newLayout: Layout[]) => {
+    if (!dashboardStore.activeDashboard) return
 
     // Convert react-grid-layout Layout back to our DashboardWidget format
     const updatedWidgets = config.widgets.map((widget, index) => {
@@ -141,6 +142,18 @@ export const DynamicDashboard: React.FC<DynamicDashboardProps> = observer(({ con
     dashboardStore.saveDashboard(updatedDashboard)
   }, [config.widgets])
 
+  // Called when drag completes
+  const handleDragStop = useCallback((layout: Layout[]) => {
+    if (!dashboardStore.isEditMode) return
+    saveLayout(layout)
+  }, [saveLayout])
+
+  // Called when resize completes
+  const handleResizeStop = useCallback((layout: Layout[]) => {
+    if (!dashboardStore.isEditMode) return
+    saveLayout(layout)
+  }, [saveLayout])
+
   // We want H3 = 320px including gaps between widgets
   // H3 = (3 * rowHeight) + (2 * rowGap) = 320px
   // With 8px gap: 3 * rowHeight + 16px = 320px
@@ -156,7 +169,8 @@ export const DynamicDashboard: React.FC<DynamicDashboardProps> = observer(({ con
       width={1200}
       isDraggable={dashboardStore.isEditMode}
       isResizable={dashboardStore.isEditMode}
-      onLayoutChange={handleLayoutChange}
+      onDragStop={handleDragStop}
+      onResizeStop={handleResizeStop}
       compactType={null}
       preventCollision={false}
       containerPadding={[0, 0]}
