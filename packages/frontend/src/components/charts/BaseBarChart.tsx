@@ -25,7 +25,7 @@ export function BaseBarChart({
   valueFormatter,
   color = '#3b82f6',
   highlightLastBar = false,
-  height = 320,
+  height: _height = 320,
   currentValue,
   percentageChange
 }: BaseBarChartProps) {

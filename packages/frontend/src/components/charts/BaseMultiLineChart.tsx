@@ -31,7 +31,7 @@ export function BaseMultiLineChart({
   title,
   valueFormatter,
   showLegend = true,
-  height,
+  height: _height,
   currentValue
 }: BaseMultiLineChartProps) {
   const chartRef = useRef<HTMLDivElement>(null)
