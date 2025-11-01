@@ -1,6 +1,7 @@
 import { Hono } from 'hono'
 import { zValidator } from '@hono/zod-validator'
 import { z } from 'zod'
+import { requireAuth } from '../middleware/auth'
 
 // Dashboard config schema
 const dashboardConfigSchema = z.object({
@@ -149,8 +150,14 @@ let dashboards: any[] = [
 
 export const dashboardRoutes = new Hono()
 
-// Get all dashboards
+dashboardRoutes.use('*', requireAuth)
+
+// Get all dashboards (handle both with and without trailing slash)
 dashboardRoutes.get('/', (c) => {
+  return c.json({ dashboards })
+})
+
+dashboardRoutes.get('', (c) => {
   return c.json({ dashboards })
 })
 

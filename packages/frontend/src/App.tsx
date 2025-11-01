@@ -6,12 +6,19 @@ import { MainLayout } from './components/layout/main-layout'
 import { DynamicDashboard } from './components/dashboard/DynamicDashboard'
 import { EditableDashboardHeader } from './components/dashboard/EditableDashboardHeader'
 import { dashboardStore } from './stores/dashboardStore'
+import { authStore } from './stores/authStore'
+import { AuthPanel } from './components/auth/AuthPanel'
 
 const App = observer(() => {
   useEffect(() => {
-    // Load dashboards when the app starts
-    dashboardStore.loadDashboards()
+    authStore.initialize()
   }, [])
+
+  useEffect(() => {
+    if (authStore.isAuthenticated && authStore.activeOrganizationId) {
+      dashboardStore.loadDashboards()
+    }
+  }, [authStore.isAuthenticated, authStore.activeOrganizationId])
 
   const handleTabChange = (value: string) => {
     dashboardStore.setActiveDashboard(value)
@@ -27,6 +34,22 @@ const App = observer(() => {
         dashboardId={dashboard.id}
         dashboardName={dashboard.name}
       />
+    )
+  }
+
+  if (!authStore.isInitialized || authStore.isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-background">
+        <p className="text-muted-foreground">Loading…</p>
+      </div>
+    )
+  }
+
+  if (!authStore.isAuthenticated) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-background">
+        <AuthPanel />
+      </div>
     )
   }
 

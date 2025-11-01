@@ -28,7 +28,6 @@ import { MrrChurnChart } from './MrrChurnChart'
 import { CustomerChurnChart } from './CustomerChurnChart'
 import { dashboardStore } from '../../stores/dashboardStore'
 import 'react-grid-layout/css/styles.css'
-import 'react-resizable/css/styles.css'
 
 interface DynamicDashboardProps {
   config: DashboardConfig

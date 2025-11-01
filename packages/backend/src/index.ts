@@ -1,11 +1,16 @@
+import 'dotenv/config'
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { logger } from 'hono/logger'
 import { counterRoutes } from './routes/counter'
 import { webhookRoutes } from './routes/stripe-webhook'
 import { dashboardRoutes } from './routes/dashboards'
+import { sessionMiddleware } from './middleware/auth'
+import { authRoutes } from './routes/auth'
+import { organizationsRoutes } from './routes/organizations'
+import type { Env } from './types'
 
-const app = new Hono()
+const app = new Hono<Env>()
 
 // Middleware
 app.use('*', logger())
@@ -13,12 +18,16 @@ app.use('*', cors({
   origin: ['http://localhost:3000'],
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
 }))
+app.use('*', sessionMiddleware)
 
 // Routes
 app.route('/api/counter', counterRoutes)
 app.route('/webhook/stripe', webhookRoutes)
 app.route('/api/dashboards', dashboardRoutes)
+app.route('/api/auth', authRoutes)
+app.route('/api/organizations', organizationsRoutes)
 
 // Health check
 app.get('/health', (c) => {
@@ -44,9 +53,16 @@ const port = parseInt(process.env.PORT || '3001')
 // Node runtime - use node:http
 const { createServer } = await import('node:http')
 const server = createServer(async (req, res) => {
+  const headers = Object.fromEntries(
+    Object.entries(req.headers).map(([key, value]) => [
+      key,
+      Array.isArray(value) ? value.join(',') : value ?? '',
+    ]),
+  )
+
   const response = await app.fetch(new Request(`http://localhost:${port}${req.url}`, {
     method: req.method,
-    headers: req.headers as HeadersInit,
+    headers,
     body: req.method !== 'GET' && req.method !== 'HEAD' ? await new Promise<Buffer>((resolve) => {
       const chunks: Buffer[] = []
       req.on('data', (chunk) => chunks.push(chunk))
