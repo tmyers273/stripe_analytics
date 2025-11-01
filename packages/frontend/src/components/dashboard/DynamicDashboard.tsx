@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from 'react'
+import React, { useMemo, useCallback, useState, useEffect, useRef } from 'react'
 import { observer } from 'mobx-react-lite'
 import GridLayout, { Layout } from 'react-grid-layout'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -99,6 +99,22 @@ const WidgetRenderer: React.FC<{ widget: DashboardWidget }> = ({ widget }) => {
 }
 
 export const DynamicDashboard: React.FC<DynamicDashboardProps> = observer(({ config }) => {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [containerWidth, setContainerWidth] = useState(1200)
+
+  // Measure container width for responsive grid
+  useEffect(() => {
+    const updateWidth = () => {
+      if (containerRef.current) {
+        setContainerWidth(containerRef.current.offsetWidth)
+      }
+    }
+
+    updateWidth()
+    window.addEventListener('resize', updateWidth)
+    return () => window.removeEventListener('resize', updateWidth)
+  }, [])
+
   // Convert DashboardWidget grid positions to react-grid-layout Layout format
   const layout = useMemo(() => {
     return config.widgets.map((widget, index) => ({
@@ -161,26 +177,28 @@ export const DynamicDashboard: React.FC<DynamicDashboardProps> = observer(({ con
   const rowHeight = 101.33
 
   return (
-    <GridLayout
-      className="layout"
-      layout={layout}
-      cols={2}
-      rowHeight={rowHeight}
-      width={1200}
-      isDraggable={dashboardStore.isEditMode}
-      isResizable={dashboardStore.isEditMode}
-      onDragStop={handleDragStop}
-      onResizeStop={handleResizeStop}
-      compactType="vertical"
-      preventCollision={false}
-      containerPadding={[0, 0]}
-      margin={[8, 8]}
-    >
-      {config.widgets.map((widget, index) => (
-        <div key={`widget-${index}`} className="w-full h-full">
-          <WidgetRenderer widget={widget} />
-        </div>
-      ))}
-    </GridLayout>
+    <div ref={containerRef} className="w-full">
+      <GridLayout
+        className="layout"
+        layout={layout}
+        cols={2}
+        rowHeight={rowHeight}
+        width={containerWidth}
+        isDraggable={dashboardStore.isEditMode}
+        isResizable={dashboardStore.isEditMode}
+        onDragStop={handleDragStop}
+        onResizeStop={handleResizeStop}
+        compactType="vertical"
+        preventCollision={false}
+        containerPadding={[0, 0]}
+        margin={[8, 8]}
+      >
+        {config.widgets.map((widget, index) => (
+          <div key={`widget-${index}`} className="w-full h-full">
+            <WidgetRenderer widget={widget} />
+          </div>
+        ))}
+      </GridLayout>
+    </div>
   )
 })
