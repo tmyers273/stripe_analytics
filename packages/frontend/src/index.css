@@ -57,3 +57,27 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* React Grid Layout custom styles */
+.react-grid-item.react-grid-placeholder {
+  background: hsl(var(--primary) / 0.1);
+  border: 2px dashed hsl(var(--primary));
+  border-radius: 0.5rem;
+  opacity: 0.5;
+}
+
+.react-grid-item > .react-resizable-handle::after {
+  border-right: 2px solid hsl(var(--primary) / 0.4);
+  border-bottom: 2px solid hsl(var(--primary) / 0.4);
+}
+
+.react-grid-item.react-draggable-dragging {
+  opacity: 0.9;
+  z-index: 100;
+}
+
+.react-grid-item.cssTransforms {
+  transition-property: transform, width, height;
+  transition-duration: 200ms;
+  transition-timing-function: ease;
+}

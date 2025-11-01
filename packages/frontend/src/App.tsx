@@ -81,7 +81,10 @@ const App = observer(() => {
 
                 {dashboard.widgets.length > 0 ? (
                   <div className="border p-2 rounded-xl bg-muted/30 relative">
-                    <DynamicDashboard config={{ widgets: dashboard.widgets }} />
+                    <DynamicDashboard
+                      config={{ widgets: dashboard.widgets }}
+                      dashboardId={dashboard.id}
+                    />
                   </div>
                 ) : (
                   <Card>

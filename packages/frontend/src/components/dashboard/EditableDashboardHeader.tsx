@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react"
-import { Filter, Plus, Check, X, Pencil } from "lucide-react"
+import { Filter, Plus, Check, X, Pencil, Move } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { observer } from "mobx-react-lite"
@@ -96,6 +96,16 @@ export const EditableDashboardHeader = observer(({ dashboardId, dashboardName }:
         )}
       </div>
       <div className="flex items-center gap-2">
+        <Button
+          variant={dashboardStore.isEditMode ? "default" : "outline"}
+          size="sm"
+          onClick={() => dashboardStore.toggleEditMode()}
+          title={dashboardStore.isEditMode ? "Exit edit mode" : "Enter edit mode to rearrange widgets"}
+          className="gap-2"
+        >
+          <Move className="h-4 w-4" />
+          {dashboardStore.isEditMode ? "Done" : "Edit Layout"}
+        </Button>
         <Button variant="outline" size="icon" title="Filter (coming soon)">
           <Filter className="h-4 w-4" />
         </Button>
