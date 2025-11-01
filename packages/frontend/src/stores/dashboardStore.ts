@@ -16,9 +16,18 @@ class DashboardStore {
   activeDashboardId: string = 'home'
   isLoading: boolean = false
   error: string | null = null
+  isEditMode: boolean = false
 
   constructor() {
     makeAutoObservable(this)
+  }
+
+  setEditMode(enabled: boolean) {
+    this.isEditMode = enabled
+  }
+
+  toggleEditMode() {
+    this.isEditMode = !this.isEditMode
   }
 
   get activeDashboard(): Dashboard | undefined {

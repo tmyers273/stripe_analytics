@@ -3,10 +3,8 @@ import { observer } from 'mobx-react-lite'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './components/ui/tabs'
 import { MainLayout } from './components/layout/main-layout'
-import { DashboardHeader } from './components/dashboard/DashboardHeader'
 import { DynamicDashboard } from './components/dashboard/DynamicDashboard'
-import { MarketingHeader } from './components/dashboard/MarketingHeader'
-import { CustomerSuccessHeader } from './components/dashboard/CustomerSuccessHeader'
+import { EditableDashboardHeader } from './components/dashboard/EditableDashboardHeader'
 import { dashboardStore } from './stores/dashboardStore'
 
 const App = observer(() => {
@@ -21,24 +19,15 @@ const App = observer(() => {
 
   // Helper function to get the appropriate header component
   const getDashboardHeader = (dashboardId: string) => {
-    switch (dashboardId) {
-      case 'home':
-        return <DashboardHeader />
-      case 'marketing':
-        return <MarketingHeader />
-      case 'customer-success':
-        return <CustomerSuccessHeader />
-      default:
-        return (
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-bold">
-                {dashboardStore.dashboards.find(d => d.id === dashboardId)?.name || 'Dashboard'}
-              </h1>
-            </div>
-          </div>
-        )
-    }
+    const dashboard = dashboardStore.dashboards.find(d => d.id === dashboardId)
+    if (!dashboard) return null
+
+    return (
+      <EditableDashboardHeader
+        dashboardId={dashboard.id}
+        dashboardName={dashboard.name}
+      />
+    )
   }
 
   if (dashboardStore.isLoading && dashboardStore.dashboards.length === 0) {
@@ -92,7 +81,10 @@ const App = observer(() => {
 
                 {dashboard.widgets.length > 0 ? (
                   <div className="border p-2 rounded-xl bg-muted/30 relative">
-                    <DynamicDashboard config={{ widgets: dashboard.widgets }} />
+                    <DynamicDashboard
+                      config={{ widgets: dashboard.widgets }}
+                      dashboardId={dashboard.id}
+                    />
                   </div>
                 ) : (
                   <Card>

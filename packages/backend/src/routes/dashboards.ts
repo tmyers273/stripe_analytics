@@ -44,7 +44,7 @@ let dashboards: any[] = [
         url: '/api/mrr',
       },
       {
-        grid: { x: 1, y: 6, width: 1, height: 2 },
+        grid: { x: 1, y: 6, width: 1, height: 3 },
         kind: 'chart' as const,
         metric: 'mrr_movements',
         url: '/api/mrr-movements',
@@ -55,7 +55,7 @@ let dashboards: any[] = [
         },
       },
       {
-        grid: { x: 0, y: 8, width: 1, height: 2 },
+        grid: { x: 0, y: 9, width: 1, height: 2 },
         kind: 'chart' as const,
         metric: 'customer_growth',
         url: '/api/subscribers',
@@ -66,7 +66,7 @@ let dashboards: any[] = [
         },
       },
       {
-        grid: { x: 1, y: 8, width: 1, height: 2 },
+        grid: { x: 1, y: 9, width: 1, height: 2 },
         kind: 'chart' as const,
         metric: 'arpa',
         url: '/api/arpa',
@@ -77,7 +77,7 @@ let dashboards: any[] = [
         },
       },
       {
-        grid: { x: 0, y: 10, width: 2, height: 3 },
+        grid: { x: 0, y: 11, width: 2, height: 3 },
         kind: 'custom_chart' as const,
         metric: 'arr_growth',
         config: { customType: 'arr_cohorts' },
