@@ -1,4 +1,4 @@
-import { sql } from 'drizzle-orm';
+import { relations, sql } from 'drizzle-orm';
 import { index, jsonb, pgEnum, pgTable, primaryKey, text, timestamp, uniqueIndex, uuid } from 'drizzle-orm/pg-core';
 
 export const membershipRoleEnum = pgEnum('membership_role', ['owner', 'admin', 'member']);
@@ -117,3 +117,70 @@ export const auditLogs = pgTable('audit_logs', {
   metadata: jsonb('metadata').$type<Record<string, unknown>>(),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 });
+
+// Relations
+export const organizationsRelations = relations(organizations, ({ many }) => ({
+  members: many(organizationMembers),
+  users: many(users),
+}));
+
+export const usersRelations = relations(users, ({ one, many }) => ({
+  defaultOrganization: one(organizations, {
+    fields: [users.defaultOrganizationId],
+    references: [organizations.id],
+  }),
+  credentials: one(userCredentials, {
+    fields: [users.id],
+    references: [userCredentials.userId],
+  }),
+  memberships: many(organizationMembers),
+  sessions: many(sessions),
+  identities: many(userIdentities),
+}));
+
+export const userCredentialsRelations = relations(userCredentials, ({ one }) => ({
+  user: one(users, {
+    fields: [userCredentials.userId],
+    references: [users.id],
+  }),
+}));
+
+export const organizationMembersRelations = relations(organizationMembers, ({ one }) => ({
+  organization: one(organizations, {
+    fields: [organizationMembers.organizationId],
+    references: [organizations.id],
+  }),
+  user: one(users, {
+    fields: [organizationMembers.userId],
+    references: [users.id],
+  }),
+}));
+
+export const sessionsRelations = relations(sessions, ({ one }) => ({
+  user: one(users, {
+    fields: [sessions.userId],
+    references: [users.id],
+  }),
+  activeOrganization: one(organizations, {
+    fields: [sessions.activeOrganizationId],
+    references: [organizations.id],
+  }),
+}));
+
+export const userIdentitiesRelations = relations(userIdentities, ({ one }) => ({
+  user: one(users, {
+    fields: [userIdentities.userId],
+    references: [users.id],
+  }),
+}));
+
+export const auditLogsRelations = relations(auditLogs, ({ one }) => ({
+  user: one(users, {
+    fields: [auditLogs.userId],
+    references: [users.id],
+  }),
+  organization: one(organizations, {
+    fields: [auditLogs.organizationId],
+    references: [organizations.id],
+  }),
+}));
