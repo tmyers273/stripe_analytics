@@ -1,6 +1,7 @@
 import React, { useMemo, useCallback, useState, useEffect, useRef } from 'react'
 import { observer } from 'mobx-react-lite'
 import GridLayout, { Layout } from 'react-grid-layout'
+import { motion } from 'framer-motion'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { DashboardWidget, DashboardConfig } from '../../types/dashboardData'
 import { TopWinsCard } from './TopWinsCard'
@@ -101,6 +102,7 @@ const WidgetRenderer: React.FC<{ widget: DashboardWidget }> = ({ widget }) => {
 export const DynamicDashboard: React.FC<DynamicDashboardProps> = observer(({ config }) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const [containerWidth, setContainerWidth] = useState(1200)
+  const [isDragging, setIsDragging] = useState(false)
 
   // Measure container width for responsive grid
   useEffect(() => {
@@ -158,14 +160,26 @@ export const DynamicDashboard: React.FC<DynamicDashboardProps> = observer(({ con
     dashboardStore.saveDashboard(updatedDashboard)
   }, [config.widgets])
 
+  // Called when drag starts
+  const handleDragStart = useCallback(() => {
+    setIsDragging(true)
+  }, [])
+
   // Called when drag completes
   const handleDragStop = useCallback((layout: Layout[]) => {
+    setIsDragging(false)
     if (!dashboardStore.isEditMode) return
     saveLayout(layout)
   }, [saveLayout])
 
+  // Called when resize starts
+  const handleResizeStart = useCallback(() => {
+    setIsDragging(true)
+  }, [])
+
   // Called when resize completes
   const handleResizeStop = useCallback((layout: Layout[]) => {
+    setIsDragging(false)
     if (!dashboardStore.isEditMode) return
     saveLayout(layout)
   }, [saveLayout])
@@ -186,7 +200,9 @@ export const DynamicDashboard: React.FC<DynamicDashboardProps> = observer(({ con
         width={containerWidth}
         isDraggable={dashboardStore.isEditMode}
         isResizable={dashboardStore.isEditMode}
+        onDragStart={handleDragStart}
         onDragStop={handleDragStop}
+        onResizeStart={handleResizeStart}
         onResizeStop={handleResizeStop}
         compactType="vertical"
         preventCollision={false}
@@ -195,7 +211,24 @@ export const DynamicDashboard: React.FC<DynamicDashboardProps> = observer(({ con
       >
         {config.widgets.map((widget, index) => (
           <div key={`widget-${index}`} className="w-full h-full">
-            <WidgetRenderer widget={widget} />
+            <motion.div
+              layout
+              transition={{
+                type: 'spring',
+                stiffness: isDragging ? 250 : 120,
+                damping: isDragging ? 12 : 20,
+              }}
+              animate={isDragging ? {
+                scale: 1.03,
+                boxShadow: '0px 12px 40px rgba(0, 0, 0, 0.15)',
+              } : {
+                scale: 1,
+                boxShadow: 'none',
+              }}
+              className="w-full h-full cursor-grab active:cursor-grabbing"
+            >
+              <WidgetRenderer widget={widget} />
+            </motion.div>
           </div>
         ))}
       </GridLayout>
