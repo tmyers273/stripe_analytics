@@ -219,10 +219,8 @@ export const DynamicDashboard: React.FC<DynamicDashboardProps> = observer(({ con
                 damping: isDragging ? 12 : 20,
               }}
               animate={isDragging ? {
-                scale: 1.03,
                 boxShadow: '0px 12px 40px rgba(0, 0, 0, 0.15)',
               } : {
-                scale: 1,
                 boxShadow: 'none',
               }}
               className="w-full h-full cursor-grab active:cursor-grabbing"
